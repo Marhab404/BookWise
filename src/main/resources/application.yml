@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: BookWise
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: true
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        format_sql: false
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 40MB
+  thymeleaf:
+    cache: false
+
+server:
+  error:
+    whitelabel:
+      enabled: false
+
+app:
+  seed-demo: true
+  security:
+    cookie-secure: false
+  jwt:
+    secret: ${JWT_SECRET:default_secret_key_for_dev_purposes_only_must_be_changed_in_prod}
+    expiration-minutes: 480
+    cookie-name: BOOKWISE_JWT
+  storage:
+    root: ${STORAGE_ROOT:./storage}
+    max-payment-proof-size-bytes: 10485760
+  bank-transfer:
+    bank-name: ${BANK_TRANSFER_BANK_NAME:BookWise Bank}
+    account-holder-name: ${BANK_TRANSFER_ACCOUNT_HOLDER:BookWise SARL}
+    iban: ${BANK_TRANSFER_IBAN:MA00 0000 0000 0000 0000 0000 0000}
+    reference-instruction: ${BANK_TRANSFER_REFERENCE:Include your order number in the transfer reference}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Home')}"></head>
+<body class="bg-slate-50 text-slate-900">
+<div th:replace="~{fragments :: navbar('home')}"></div>
+
+<main>
+    <section class="bg-gradient-to-br from-bookwise-900 via-bookwise-800 to-slate-900 text-white">
+        <div class="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-28">
+            <div class="max-w-xl">
+                <p class="mb-4 inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-1 text-sm">Digital library</p>
+                <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">Browse, pay by bank transfer, and unlock books securely.</h1>
+                <p class="mt-6 text-lg text-slate-200">A clean server-rendered library platform for manual virement workflows, admin approval, and protected digital delivery.</p>
+                <div class="mt-8 flex flex-wrap gap-3">
+                    <a href="/books" class="rounded-full bg-white px-6 py-3 font-semibold text-bookwise-800 transition hover:bg-bookwise-100">Browse catalog</a>
+                    <a href="/auth/register" class="rounded-full border border-white/30 px-6 py-3 font-semibold text-white transition hover:bg-white/10">Create account</a>
+                </div>
+            </div>
+            <div class="grid gap-4 self-center">
+                <div class="rounded-3xl border border-white/15 bg-white/10 p-6 backdrop-blur">
+                    <p class="text-sm uppercase tracking-[0.2em] text-bookwise-100">Workflow</p>
+                    <ol class="mt-4 space-y-3 text-slate-100">
+                        <li>1. Select published books.</li>
+                        <li>2. Place order by bank transfer only.</li>
+                        <li>3. Upload receipt proof.</li>
+                        <li>4. Wait for admin validation.</li>
+                        <li>5. Read or download in your library.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div class="mb-8 flex items-end justify-between gap-4">
+            <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.2em] text-bookwise-700">Featured</p>
+                <h2 class="mt-2 text-2xl font-bold">Featured books</h2>
+            </div>
+            <a href="/books" class="text-sm font-semibold text-bookwise-700 hover:text-bookwise-800">See all books</a>
+        </div>
+
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <article th:each="book : ${featuredBooks}" class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:shadow-lg">
+                <img th:src="@{'/covers/' + ${book.id}}" alt="Cover" class="h-72 w-full object-cover"/>
+                <div class="p-5">
+                    <p class="text-sm text-slate-500" th:text="${#strings.listJoin(book.authors.![fullName], ', ')}">Author</p>
+                    <h3 class="mt-2 text-xl font-semibold text-slate-900" th:text="${book.title}">Title</h3>
+                    <p class="mt-2 text-sm text-slate-600 line-clamp-3" th:text="${book.description}">Description</p>
+                    <div class="mt-4 flex items-center justify-between">
+                        <span class="font-semibold text-bookwise-700" th:text="${@moneyUtils.formatMinorUnits(book.priceAmount, book.currency)}">49.90 MAD</span>
+                        <a th:href="@{'/books/' + ${book.id}}" class="rounded-full bg-bookwise-700 px-4 py-2 text-sm font-semibold text-white">View</a>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

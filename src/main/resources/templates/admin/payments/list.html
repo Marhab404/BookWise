@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Admin payments')}"></head>
+<body class="bg-slate-50 text-slate-900">
+<div th:replace="~{fragments :: navbar('admin')}"></div>
+
+<main class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <div th:replace="~{fragments :: flash}"></div>
+    <div class="flex flex-col gap-8 lg:flex-row">
+        <div th:replace="~{fragments :: adminNav('payments')}"></div>
+        <section class="flex-1">
+            <div class="mb-6">
+                <p class="text-sm font-semibold uppercase tracking-[0.2em] text-bookwise-700">Payments</p>
+                <h1 class="mt-2 text-3xl font-bold">Review bank transfers</h1>
+            </div>
+
+            <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-slate-50 text-slate-500">
+                    <tr>
+                        <th class="px-6 py-4">Order</th>
+                        <th class="px-6 py-4">User</th>
+                        <th class="px-6 py-4">Email</th>
+                        <th class="px-6 py-4">Total</th>
+                        <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4">Submitted</th>
+                        <th class="px-6 py-4"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="payment : ${payments}" class="border-t border-slate-100">
+                        <td class="px-6 py-4 font-medium" th:text="${payment.order.id}"></td>
+                        <td class="px-6 py-4" th:text="${payment.order.user.fullName}"></td>
+                        <td class="px-6 py-4" th:text="${payment.order.user.email}"></td>
+                        <td class="px-6 py-4" th:text="${@moneyUtils.formatMinorUnits(payment.order.totalAmount, payment.order.currency)}"></td>
+                        <td class="px-6 py-4" th:text="${payment.status}"></td>
+                        <td class="px-6 py-4" th:text="${#temporals.format(payment.submittedAt, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td class="px-6 py-4">
+                            <a th:href="@{'/admin/payments/' + ${payment.id}}" class="font-semibold text-bookwise-700">Review</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

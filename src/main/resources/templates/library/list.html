@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('My library')}"></head>
+<body class="bg-slate-50 text-slate-900">
+<div th:replace="~{fragments :: navbar('library')}"></div>
+
+<main class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+    <div th:replace="~{fragments :: flash}"></div>
+    <div class="mb-8">
+        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-bookwise-700">Library</p>
+        <h1 class="mt-2 text-3xl font-bold">My purchased books</h1>
+    </div>
+
+    <div th:if="${#lists.isEmpty(books)}" class="rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500">
+        No paid books yet.
+    </div>
+
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" th:if="${!#lists.isEmpty(books)}">
+        <article th:each="book : ${books}" class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+            <img th:src="@{'/covers/' + ${book.id}}" alt="Cover" class="h-72 w-full object-cover"/>
+            <div class="p-5">
+                <p class="text-sm text-slate-500" th:text="${#strings.listJoin(book.authors.![fullName], ', ')}"></p>
+                <h2 class="mt-2 text-xl font-semibold" th:text="${book.title}"></h2>
+                <div class="mt-5 flex gap-2">
+                    <a th:href="@{'/my-library/books/' + ${book.id} + '/read'}" class="rounded-full bg-bookwise-700 px-4 py-2 text-sm font-semibold text-white">Open</a>
+                    <a th:href="@{'/my-library/books/' + ${book.id} + '/download'}" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700">Download</a>
+                </div>
+            </div>
+        </article>
+    </div>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

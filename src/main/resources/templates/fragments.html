@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(pageTitle)">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${pageTitle + ' | BookWise'}">BookWise</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bookwise: {
+                            50: '#ecfeff',
+                            100: '#cffafe',
+                            200: '#a5f3fc',
+                            500: '#14b8a6',
+                            600: '#0f766e',
+                            700: '#115e59',
+                            800: '#134e4a',
+                            900: '#042f2e'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+
+<div th:fragment="flash" class="space-y-3">
+    <div th:if="${flashMessage}" class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-800" th:text="${flashMessage}"></div>
+    <div th:if="${flashError}" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-rose-800" th:text="${flashError}"></div>
+</div>
+
+<div th:fragment="formErrors" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-rose-800"
+     th:if="${#fields.hasAnyErrors()}">
+    <p class="mb-2 font-semibold">Please fix the following:</p>
+    <ul class="list-disc space-y-1 pl-5">
+        <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+    </ul>
+</div>
+
+<nav th:fragment="navbar(activePage)" class="border-b border-slate-200 bg-white/95 backdrop-blur">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+        <div class="flex items-center gap-8">
+            <a href="/" class="text-xl font-bold tracking-tight text-bookwise-700">BookWise</a>
+            <div class="hidden items-center gap-5 md:flex">
+                <a href="/books"
+                   th:classappend="${activePage == 'books'} ? ' text-bookwise-700 font-semibold' : ' text-slate-600 hover:text-bookwise-700'"
+                   class="transition">Catalog</a>
+                <a href="/my-orders"
+                   sec:authorize="isAuthenticated()"
+                   th:classappend="${activePage == 'orders'} ? ' text-bookwise-700 font-semibold' : ' text-slate-600 hover:text-bookwise-700'"
+                   class="transition">My Orders</a>
+                <a href="/my-library"
+                   sec:authorize="isAuthenticated()"
+                   th:classappend="${activePage == 'library'} ? ' text-bookwise-700 font-semibold' : ' text-slate-600 hover:text-bookwise-700'"
+                   class="transition">My Library</a>
+                <a href="/admin"
+                   sec:authorize="hasRole('ADMIN')"
+                   th:classappend="${activePage == 'admin'} ? ' text-bookwise-700 font-semibold' : ' text-slate-600 hover:text-bookwise-700'"
+                   class="transition">Admin</a>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <a href="/auth/login"
+               sec:authorize="isAnonymous()"
+               class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-bookwise-600 hover:text-bookwise-700">Sign in</a>
+            <a href="/auth/register"
+               sec:authorize="isAnonymous()"
+               class="rounded-full bg-bookwise-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-bookwise-800">Create account</a>
+            <form sec:authorize="isAuthenticated()" th:action="@{/auth/logout}" method="post" class="inline">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-bookwise-600 hover:text-bookwise-700">
+                    Logout
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<footer th:fragment="footer" class="border-t border-slate-200 bg-white">
+    <div class="mx-auto max-w-7xl px-4 py-8 text-sm text-slate-500 sm:px-6 lg:px-8">
+        BookWise digital library platform.
+    </div>
+</footer>
+
+<aside th:fragment="adminNav(activePage)" class="w-full rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:w-72">
+    <div class="mb-4">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Admin</p>
+        <h2 class="mt-1 text-lg font-semibold text-slate-900">Management</h2>
+    </div>
+    <nav class="space-y-2">
+        <a href="/admin" th:classappend="${activePage == 'dashboard'} ? ' bg-bookwise-50 text-bookwise-800' : ' text-slate-600 hover:bg-slate-50'"
+           class="block rounded-xl px-3 py-2 transition">Dashboard</a>
+        <a href="/admin/books" th:classappend="${activePage == 'books'} ? ' bg-bookwise-50 text-bookwise-800' : ' text-slate-600 hover:bg-slate-50'"
+           class="block rounded-xl px-3 py-2 transition">Books</a>
+        <a href="/admin/authors" th:classappend="${activePage == 'authors'} ? ' bg-bookwise-50 text-bookwise-800' : ' text-slate-600 hover:bg-slate-50'"
+           class="block rounded-xl px-3 py-2 transition">Authors</a>
+        <a href="/admin/categories" th:classappend="${activePage == 'categories'} ? ' bg-bookwise-50 text-bookwise-800' : ' text-slate-600 hover:bg-slate-50'"
+           class="block rounded-xl px-3 py-2 transition">Categories</a>
+        <a href="/admin/payments" th:classappend="${activePage == 'payments'} ? ' bg-bookwise-50 text-bookwise-800' : ' text-slate-600 hover:bg-slate-50'"
+           class="block rounded-xl px-3 py-2 transition">Payments</a>
+    </nav>
+</aside>
+</html>

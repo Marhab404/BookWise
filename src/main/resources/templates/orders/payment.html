@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Payment instructions')}"></head>
+<body class="bg-slate-50 text-slate-900">
+<div th:replace="~{fragments :: navbar('orders')}"></div>
+
+<main class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <div class="mb-8">
+        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-bookwise-700">Order</p>
+        <h1 class="mt-2 text-3xl font-bold">Payment instructions</h1>
+        <p class="mt-2 text-sm text-slate-500">Order #<span th:text="${order.id}"></span></p>
+    </div>
+
+    <div class="grid gap-8 lg:grid-cols-[1fr,360px]">
+        <section class="space-y-4">
+            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h2 class="text-xl font-bold">Selected books</h2>
+                <div class="mt-4 space-y-3">
+                    <div th:each="item : ${order.items}" class="flex items-center justify-between gap-3 border-b border-slate-100 pb-3 last:border-0">
+                        <div>
+                            <p class="font-medium" th:text="${item.book.title}"></p>
+                            <p class="text-sm text-slate-500" th:text="${#strings.listJoin(item.book.authors.![fullName], ', ')}"></p>
+                        </div>
+                        <span class="font-semibold text-bookwise-700" th:text="${@moneyUtils.formatMinorUnits(item.unitPriceAmount, order.currency)}"></span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h2 class="text-xl font-bold">Bank transfer instructions</h2>
+                <div class="mt-4 space-y-3 text-sm text-slate-600">
+                    <p><span class="font-semibold text-slate-900">Bank:</span> <span th:text="${bankTransfer.bankName}"></span></p>
+                    <p><span class="font-semibold text-slate-900">Account holder:</span> <span th:text="${bankTransfer.accountHolderName}"></span></p>
+                    <p><span class="font-semibold text-slate-900">IBAN/RIB:</span> <span th:text="${bankTransfer.iban}"></span></p>
+                    <p><span class="font-semibold text-slate-900">Reference:</span> <span th:text="${bankTransfer.referenceInstruction}"></span></p>
+                </div>
+            </article>
+        </section>
+
+        <aside class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 class="text-xl font-bold">Amount to transfer</h2>
+            <p class="mt-2 text-3xl font-bold text-bookwise-700" th:text="${@moneyUtils.formatMinorUnits(order.totalAmount, order.currency)}"></p>
+            <p class="mt-2 text-sm text-slate-500">Order status: <span class="font-semibold" th:text="${order.status}"></span></p>
+
+            <form class="mt-6 space-y-4" th:action="@{/orders/{id}/payment(id=${order.id})}" th:object="${paymentProofSubmissionForm}" method="post" enctype="multipart/form-data">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <div th:replace="~{fragments :: formErrors}"></div>
+                <div>
+                    <label class="mb-2 block text-sm font-medium">Payment proof</label>
+                    <input th:field="*{receiptFile}" type="file" accept=".pdf,.png,.jpg,.jpeg" class="w-full rounded-2xl border border-slate-300 px-4 py-3"/>
+                </div>
+                <div>
+                    <label class="mb-2 block text-sm font-medium">Transfer reference (optional)</label>
+                    <input th:field="*{transferReference}" type="text" class="w-full rounded-2xl border border-slate-300 px-4 py-3"/>
+                </div>
+                <button type="submit" class="w-full rounded-2xl bg-bookwise-700 px-4 py-3 font-semibold text-white hover:bg-bookwise-800">Submit proof</button>
+            </form>
+        </aside>
+    </div>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Admin authors')}"></head>
+<body class="bg-slate-50 text-slate-900">
+<div th:replace="~{fragments :: navbar('admin')}"></div>
+
+<main class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <div th:replace="~{fragments :: flash}"></div>
+    <div class="flex flex-col gap-8 lg:flex-row">
+        <div th:replace="~{fragments :: adminNav('authors')}"></div>
+        <section class="flex-1">
+            <div class="mb-6 flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-semibold uppercase tracking-[0.2em] text-bookwise-700">Authors</p>
+                    <h1 class="mt-2 text-3xl font-bold">Manage authors</h1>
+                </div>
+                <a href="/admin/authors/create" class="rounded-full bg-bookwise-700 px-4 py-2 font-semibold text-white">Create author</a>
+            </div>
+
+            <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-slate-50 text-slate-500">
+                    <tr>
+                        <th class="px-6 py-4">Name</th>
+                        <th class="px-6 py-4">Books</th>
+                        <th class="px-6 py-4"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="author : ${authors}" class="border-t border-slate-100">
+                        <td class="px-6 py-4 font-medium" th:text="${author.fullName}"></td>
+                        <td class="px-6 py-4" th:text="${author.books.size()}"></td>
+                        <td class="px-6 py-4">
+                            <a th:href="@{'/admin/authors/' + ${author.id} + '/edit'}" class="font-semibold text-bookwise-700">Edit</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

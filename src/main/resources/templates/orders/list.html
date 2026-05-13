@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('My orders')}"></head>
+<body class="bg-slate-50 text-slate-900">
+<div th:replace="~{fragments :: navbar('orders')}"></div>
+
+<main class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+    <div th:replace="~{fragments :: flash}"></div>
+    <div class="mb-8">
+        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-bookwise-700">Orders</p>
+        <h1 class="mt-2 text-3xl font-bold">My orders</h1>
+    </div>
+
+    <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 text-slate-500">
+            <tr>
+                <th class="px-6 py-4 font-medium">Order</th>
+                <th class="px-6 py-4 font-medium">Books</th>
+                <th class="px-6 py-4 font-medium">Total</th>
+                <th class="px-6 py-4 font-medium">Status</th>
+                <th class="px-6 py-4 font-medium">Created</th>
+                <th class="px-6 py-4 font-medium"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orders}" class="border-t border-slate-100">
+                <td class="px-6 py-4 font-medium" th:text="${order.id}"></td>
+                <td class="px-6 py-4">
+                    <div class="space-y-1">
+                        <p th:each="item : ${order.items}" th:text="${item.book.title}"></p>
+                    </div>
+                </td>
+                <td class="px-6 py-4 font-semibold text-bookwise-700" th:text="${@moneyUtils.formatMinorUnits(order.totalAmount, order.currency)}"></td>
+                <td class="px-6 py-4" th:text="${order.status}"></td>
+                <td class="px-6 py-4" th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                <td class="px-6 py-4">
+                    <a th:href="@{'/my-orders/' + ${order.id}}" class="font-semibold text-bookwise-700 hover:text-bookwise-800">View</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>
