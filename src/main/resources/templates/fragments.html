@@ -120,7 +120,335 @@
     <div class="mx-auto max-w-7xl px-4 py-8 text-sm text-slate-500 sm:px-6 lg:px-8">
         BookWise digital library platform.
     </div>
+    <div th:replace="~{fragments :: chatbot}"></div>
 </footer>
+
+<div th:fragment="chatbot" sec:authorize="isAuthenticated()" class="fixed bottom-6 right-6 z-[9999] font-sans">
+    <!-- Chat Launcher Button -->
+    <button id="chatbot-launcher" class="flex h-14 w-14 items-center justify-center rounded-full bg-bookwise-700 text-white shadow-lg shadow-bookwise-700/30 transition-all duration-300 hover:scale-110 hover:bg-bookwise-800 hover:shadow-xl hover:shadow-bookwise-800/40 focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-6 w-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 0 1-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8Z" />
+        </svg>
+    </button>
+
+    <!-- Chat Panel -->
+    <div id="chatbot-panel" class="hidden absolute bottom-20 right-0 flex h-[500px] w-96 max-w-[calc(100vw-2rem)] flex-col rounded-3xl border border-slate-200/60 bg-white/95 shadow-2xl backdrop-blur-md transition-all duration-300 scale-95 origin-bottom-right opacity-0">
+        <!-- Header -->
+        <div class="flex items-center justify-between rounded-t-3xl bg-gradient-to-r from-bookwise-700 to-bookwise-800 px-5 py-4 text-white shadow-sm">
+            <div class="flex items-center gap-3">
+                <div class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                <div>
+                    <h3 class="text-sm font-semibold tracking-tight">BookWise AI</h3>
+                    <p class="text-[10px] text-bookwise-100 flex items-center gap-1">
+                        <span sec:authorize="hasRole('ADMIN')" class="rounded-full bg-red-500/20 border border-red-400/30 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-red-200">Admin Mode</span>
+                        <span sec:authorize="hasRole('READER')" class="rounded-full bg-bookwise-600/30 border border-bookwise-500/40 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-bookwise-200">Reader Mode</span>
+                    </p>
+                </div>
+            </div>
+            <button id="chatbot-close" class="rounded-full p-1 text-bookwise-100 transition hover:bg-white/10 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Messages Area -->
+        <div id="chatbot-messages" class="flex-1 overflow-y-auto p-4 space-y-4 text-sm bg-slate-50/50">
+            <!-- Welcome Message -->
+            <div class="flex gap-2">
+                <div class="flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-full bg-bookwise-100 text-bookwise-800 font-semibold text-xs">AI</div>
+                <div class="rounded-2xl rounded-tl-none border border-slate-100 bg-white p-3 text-slate-700 shadow-sm max-w-[80%]">
+                    Hello! I'm your BookWise assistant. How can I help you today?
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Input Form -->
+        <form id="chatbot-form" class="border-t border-slate-100 p-3 bg-white rounded-b-3xl">
+            <div class="flex items-center gap-2 bg-slate-50 rounded-2xl px-3 py-2 border border-slate-200/50 focus-within:border-bookwise-500 focus-within:bg-white transition duration-150">
+                <input id="chatbot-input" type="text" placeholder="Type a message..." autocomplete="off" class="flex-1 bg-transparent text-sm text-slate-800 focus:outline-none disabled:opacity-50" />
+                <button type="submit" id="chatbot-submit" class="flex h-8 w-8 items-center justify-center rounded-xl bg-bookwise-700 text-white transition hover:bg-bookwise-800 hover:scale-105 active:scale-95 disabled:opacity-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- UI Scripts -->
+    <script th:inline="javascript">
+        (function() {
+            const launcher = document.getElementById('chatbot-launcher');
+            const panel = document.getElementById('chatbot-panel');
+            const closeBtn = document.getElementById('chatbot-close');
+            const form = document.getElementById('chatbot-form');
+            const input = document.getElementById('chatbot-input');
+            const messagesContainer = document.getElementById('chatbot-messages');
+            
+            const csrfToken = /*[[${_csrf.token}]]*/ '';
+            const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
+            let previousInteractionId = null;
+
+            // Toggle Panel Open/Close
+            launcher.addEventListener('click', () => {
+                if (panel.classList.contains('hidden')) {
+                    panel.classList.remove('hidden');
+                    // Trigger reflow for transition
+                    setTimeout(() => {
+                        panel.classList.remove('scale-95', 'opacity-0');
+                        panel.classList.add('scale-100', 'opacity-100');
+                    }, 10);
+                    input.focus();
+                } else {
+                    closePanel();
+                }
+            });
+
+            closeBtn.addEventListener('click', closePanel);
+
+            function closePanel() {
+                panel.classList.remove('scale-100', 'opacity-100');
+                panel.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    panel.classList.add('hidden');
+                }, 300);
+            }
+
+            // Escape HTML function
+            function escapeHtml(text) {
+                const map = {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                };
+                return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+            }
+
+            // Append messages
+            function appendMessage(text, isUser) {
+                const msgWrapper = document.createElement('div');
+                msgWrapper.className = isUser ? 'flex justify-end gap-2' : 'flex gap-2';
+
+                const avatar = isUser 
+                    ? '' 
+                    : '<div class="flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-full bg-bookwise-100 text-bookwise-800 font-semibold text-xs">AI</div>';
+                
+                const bubbleClass = isUser
+                    ? 'rounded-2xl rounded-tr-none bg-bookwise-700 text-white p-3 shadow-sm max-w-[80%]'
+                    : 'rounded-2xl rounded-tl-none border border-slate-100 bg-white p-3 text-slate-700 shadow-sm max-w-[80%]';
+
+                const formattedText = text.replace(/\n/g, '<br/>');
+
+                msgWrapper.innerHTML = `
+                    ${avatar}
+                    <div class="${bubbleClass}">
+                        ${isUser ? escapeHtml(text) : formattedText}
+                    </div>
+                `;
+
+                messagesContainer.appendChild(msgWrapper);
+                scrollToBottom();
+            }
+
+            // Scroll to bottom
+            function scrollToBottom() {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            // Append typing indicator
+            function showTypingIndicator() {
+                const indicator = document.createElement('div');
+                indicator.id = 'chatbot-typing';
+                indicator.className = 'flex gap-2';
+                indicator.innerHTML = `
+                    <div class="flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-full bg-bookwise-100 text-bookwise-800 font-semibold text-xs">AI</div>
+                    <div class="rounded-2xl rounded-tl-none border border-slate-100 bg-white px-4 py-3 text-slate-700 shadow-sm max-w-[80%] flex items-center gap-1">
+                        <div class="h-1.5 w-1.5 rounded-full bg-slate-400 animate-bounce"></div>
+                        <div class="h-1.5 w-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:0.2s]"></div>
+                        <div class="h-1.5 w-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:0.4s]"></div>
+                    </div>
+                `;
+                messagesContainer.appendChild(indicator);
+                scrollToBottom();
+            }
+
+            function removeTypingIndicator() {
+                const indicator = document.getElementById('chatbot-typing');
+                if (indicator) {
+                    indicator.remove();
+                }
+            }
+
+            // Form Submit
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const text = input.value.trim();
+                if (!text) return;
+
+                appendMessage(text, true);
+                input.value = '';
+                showTypingIndicator();
+
+                // Disable input during request
+                input.disabled = true;
+                const submitBtn = document.getElementById('chatbot-submit');
+                submitBtn.disabled = true;
+
+                fetch('/chatbot/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        [csrfHeader]: csrfToken
+                    },
+                    body: JSON.stringify({
+                        message: text,
+                        previousInteractionId: previousInteractionId
+                    })
+                })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error('Server responded with an error');
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    removeTypingIndicator();
+                    previousInteractionId = data.previousInteractionId;
+                    
+                    if (data.message) {
+                        appendMessage(data.message, false);
+                    }
+
+                    if (data.actionPreview) {
+                        renderActionPreview(data.actionPreview);
+                    } else {
+                        // Re-enable input if no action preview is pending
+                        input.disabled = false;
+                        submitBtn.disabled = false;
+                        input.focus();
+                    }
+                })
+                .catch(err => {
+                    removeTypingIndicator();
+                    appendMessage('Sorry, an error occurred. Please try again.', false);
+                    input.disabled = false;
+                    submitBtn.disabled = false;
+                    input.focus();
+                });
+            });
+
+            // Action Preview Card Rendering
+            function renderActionPreview(preview) {
+                const card = document.createElement('div');
+                card.id = `action-card-${preview.actionId}`;
+                card.className = 'rounded-2xl border border-slate-200/80 bg-slate-50 p-4 shadow-inner mb-3 text-slate-800 space-y-2 animate-fadeIn';
+                
+                let detailsHtml = '';
+                const details = preview.details || {};
+                detailsHtml = '<div class="grid grid-cols-2 gap-x-2 gap-y-1 text-xs border-t border-slate-200/60 pt-2 mt-2">';
+                for (const [k, v] of Object.entries(details)) {
+                    if (v !== null && typeof v !== 'object') {
+                        detailsHtml += `<span class="text-slate-500 font-medium">${escapeHtml(k)}:</span> <span class="text-slate-800 truncate">${escapeHtml(v.toString())}</span>`;
+                    } else if (Array.isArray(v)) {
+                        detailsHtml += `<span class="text-slate-500 font-medium">${escapeHtml(k)}:</span> <span class="text-slate-800 truncate">${escapeHtml(JSON.stringify(v))}</span>`;
+                    }
+                }
+                detailsHtml += '</div>';
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-2 text-bookwise-700 font-semibold">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5 shrink-0 text-amber-500 animate-pulse">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                        </svg>
+                        <span class="text-sm">Action Proposed</span>
+                    </div>
+                    <p class="text-xs font-semibold text-slate-800">${escapeHtml(preview.description)}</p>
+                    ${detailsHtml}
+                    
+                    <div id="action-error-${preview.actionId}" class="hidden text-xs bg-rose-50 text-rose-600 border border-rose-200 rounded-xl p-2 font-medium"></div>
+
+                    <div class="flex flex-col gap-2 pt-2">
+                        <button id="btn-confirm-${preview.actionId}" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-xl text-xs transition duration-150 shadow-md shadow-emerald-600/10">
+                            Confirm Action
+                        </button>
+                        <button id="btn-cancel-${preview.actionId}" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 rounded-xl text-xs transition duration-150">
+                            Cancel
+                        </button>
+                    </div>
+                `;
+
+                messagesContainer.appendChild(card);
+                scrollToBottom();
+
+                const confirmBtn = document.getElementById(`btn-confirm-${preview.actionId}`);
+                const cancelBtn = document.getElementById(`btn-cancel-${preview.actionId}`);
+                const errorAlert = document.getElementById(`action-error-${preview.actionId}`);
+
+                confirmBtn.addEventListener('click', () => {
+                    // Disable controls during confirm
+                    confirmBtn.disabled = true;
+                    cancelBtn.disabled = true;
+                    confirmBtn.innerText = 'Confirming...';
+
+                    fetch('/chatbot/actions/confirm', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            [csrfHeader]: csrfToken
+                        },
+                        body: JSON.stringify({ actionId: preview.actionId })
+                    })
+                    .then(res => res.json())
+                    .then(resData => {
+                        if (resData.status === 'success') {
+                            confirmBtn.innerText = 'Success!';
+                            confirmBtn.className = 'w-full bg-emerald-700 text-white font-semibold py-2 rounded-xl text-xs';
+                            
+                            // Show success notice
+                            const successNotice = document.createElement('div');
+                            successNotice.className = 'text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl p-3 font-semibold mt-2';
+                            successNotice.innerText = 'Action executed successfully! Reloading...';
+                            card.appendChild(successNotice);
+                            scrollToBottom();
+
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1500);
+                        } else {
+                            // Display error
+                            errorAlert.innerText = resData.message || 'Execution failed';
+                            errorAlert.classList.remove('hidden');
+                            confirmBtn.disabled = false;
+                            cancelBtn.disabled = false;
+                            confirmBtn.innerText = 'Confirm Action';
+                            scrollToBottom();
+                        }
+                    })
+                    .catch(err => {
+                        errorAlert.innerText = 'Network error occurred. Please try again.';
+                        errorAlert.classList.remove('hidden');
+                        confirmBtn.disabled = false;
+                        cancelBtn.disabled = false;
+                        confirmBtn.innerText = 'Confirm Action';
+                        scrollToBottom();
+                    });
+                });
+
+                cancelBtn.addEventListener('click', () => {
+                    card.remove();
+                    // Re-enable chat input
+                    input.disabled = false;
+                    document.getElementById('chatbot-submit').disabled = false;
+                    input.focus();
+                    appendMessage('Action cancelled.', false);
+                });
+            }
+        })();
+    </script>
+</div>
 
 <aside th:fragment="adminNav(activePage)" class="w-full rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:w-72">
     <div class="mb-4">

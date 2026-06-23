@@ -1,6 +1,8 @@
 spring:
   application:
     name: BookWise
+  config:
+    import: "optional:file:.env.local[.properties]"
   jpa:
     hibernate:
       ddl-auto: update
@@ -24,6 +26,9 @@ server:
 
 app:
   seed-demo: true
+  gemini:
+    api-key: ${GEMINI_API_KEY:}
+    model: gemini-3.1-flash-lite
   security:
     cookie-secure: false
   jwt:
