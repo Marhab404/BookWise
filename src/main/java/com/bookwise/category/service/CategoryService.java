@@ -42,6 +42,15 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
+    @Transactional
+    public void delete(Long id) {
+        Category category = getById(id);
+        if (categoryRepository.existsLinkedToBooks(id)) {
+            throw new IllegalArgumentException("Category cannot be deleted while it is still assigned to books.");
+        }
+        categoryRepository.delete(category);
+    }
+
     private void ensureUniqueName(String name, Long currentId) {
         String normalized = name.trim();
         boolean exists = categoryRepository.existsByNameIgnoreCase(normalized);

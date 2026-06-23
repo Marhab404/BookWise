@@ -33,6 +33,7 @@ public class SecurityConfig {
                                 "/books/**",
                                 "/auth/login",
                                 "/auth/register",
+                                "/auth/logout",
                                 "/images/**",
                                 "/css/**",
                                 "/js/**",

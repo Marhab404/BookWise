@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -80,5 +81,22 @@ public class AdminAuthorController {
             model.addAttribute("formMode", "edit");
             return "admin/authors/form";
         }
+    }
+
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            authorService.delete(id);
+            redirectAttributes.addFlashAttribute("flashMessage", "Author deleted successfully.");
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("flashError", ex.getMessage());
+        } catch (ResponseStatusException ex) {
+            redirectAttributes.addFlashAttribute("flashError", flashMessage(ex));
+        }
+        return "redirect:/admin/authors";
+    }
+
+    private String flashMessage(ResponseStatusException ex) {
+        return ex.getReason() != null && !ex.getReason().isBlank() ? ex.getReason() : ex.getMessage();
     }
 }

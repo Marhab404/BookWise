@@ -7,7 +7,6 @@ import com.bookwise.book.entity.Book;
 import com.bookwise.book.service.BookService;
 import com.bookwise.category.service.CategoryService;
 import jakarta.validation.Valid;
-import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -81,6 +81,7 @@ public class AdminBookController {
         form.setAuthorIds(book.getAuthors().stream().map(com.bookwise.author.entity.Author::getId).toList());
         form.setCategoryIds(book.getCategories().stream().map(com.bookwise.category.entity.Category::getId).toList());
         model.addAttribute("book", book);
+        model.addAttribute("bookFiles", bookService.getBookFiles(id));
         model.addAttribute("bookForm", form);
         model.addAttribute("formMode", "edit");
         populateReferenceData(model);
@@ -120,8 +121,38 @@ public class AdminBookController {
         return "redirect:/admin/books";
     }
 
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            bookService.delete(id);
+            redirectAttributes.addFlashAttribute("flashMessage", "Book deleted successfully.");
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("flashError", ex.getMessage());
+        } catch (ResponseStatusException ex) {
+            redirectAttributes.addFlashAttribute("flashError", flashMessage(ex));
+        }
+        return "redirect:/admin/books";
+    }
+
+    @PostMapping("/{bookId}/files/{fileId}/delete")
+    public String deleteBookFile(@PathVariable Long bookId, @PathVariable Long fileId, RedirectAttributes redirectAttributes) {
+        try {
+            bookService.deleteBookFile(bookId, fileId);
+            redirectAttributes.addFlashAttribute("flashMessage", "Book file deleted successfully.");
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("flashError", ex.getMessage());
+        } catch (ResponseStatusException ex) {
+            redirectAttributes.addFlashAttribute("flashError", flashMessage(ex));
+        }
+        return "redirect:/admin/books/" + bookId + "/edit";
+    }
+
     private void populateReferenceData(Model model) {
         model.addAttribute("allAuthors", authorService.listAll());
         model.addAttribute("allCategories", categoryService.listAll());
+    }
+
+    private String flashMessage(ResponseStatusException ex) {
+        return ex.getReason() != null && !ex.getReason().isBlank() ? ex.getReason() : ex.getMessage();
     }
 }

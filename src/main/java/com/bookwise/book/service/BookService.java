@@ -13,10 +13,12 @@ import com.bookwise.book.repository.BookRepository;
 import com.bookwise.category.entity.Category;
 import com.bookwise.category.repository.CategoryRepository;
 import com.bookwise.common.MoneyUtils;
+import com.bookwise.order.repository.OrderItemRepository;
 import com.bookwise.storage.FileStorageService;
 import com.bookwise.storage.StoredFile;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -29,6 +31,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @Service
 public class BookService {
@@ -37,6 +41,7 @@ public class BookService {
     private final BookFileRepository bookFileRepository;
     private final AuthorRepository authorRepository;
     private final CategoryRepository categoryRepository;
+    private final OrderItemRepository orderItemRepository;
     private final FileStorageService fileStorageService;
     private final MoneyUtils moneyUtils;
 
@@ -45,6 +50,7 @@ public class BookService {
             BookFileRepository bookFileRepository,
             AuthorRepository authorRepository,
             CategoryRepository categoryRepository,
+            OrderItemRepository orderItemRepository,
             FileStorageService fileStorageService,
             MoneyUtils moneyUtils
     ) {
@@ -52,6 +58,7 @@ public class BookService {
         this.bookFileRepository = bookFileRepository;
         this.authorRepository = authorRepository;
         this.categoryRepository = categoryRepository;
+        this.orderItemRepository = orderItemRepository;
         this.fileStorageService = fileStorageService;
         this.moneyUtils = moneyUtils;
     }
@@ -113,6 +120,36 @@ public class BookService {
         Book book = getAdminBook(id);
         book.setPublished(published);
         return bookRepository.save(book);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Book book = getAdminBook(id);
+        if (orderItemRepository.existsByBookId(id)) {
+            throw new IllegalArgumentException("This book cannot be deleted because it is linked to existing purchases.");
+        }
+
+        List<String> storageKeys = new ArrayList<>();
+        if (StringUtils.hasText(book.getCoverImagePath())) {
+            storageKeys.add(book.getCoverImagePath());
+        }
+        for (BookFile file : book.getFiles()) {
+            if (StringUtils.hasText(file.getStorageKey())) {
+                storageKeys.add(file.getStorageKey());
+            }
+        }
+
+        bookRepository.delete(book);
+        deleteStoredFilesAfterCommit(storageKeys);
+    }
+
+    @Transactional
+    public void deleteBookFile(Long bookId, Long fileId) {
+        BookFile bookFile = bookFileRepository.findByIdAndBookId(fileId, bookId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book file not found"));
+        String storageKey = bookFile.getStorageKey();
+        bookFileRepository.delete(bookFile);
+        deleteStoredFilesAfterCommit(List.of(storageKey));
     }
 
     private void map(Book book, BookFormBase form) {
@@ -212,5 +249,23 @@ public class BookService {
 
     private String currency(String currency) {
         return StringUtils.hasText(currency) ? currency.trim().toUpperCase(Locale.ROOT) : "MAD";
+    }
+
+    private void deleteStoredFilesAfterCommit(Collection<String> storageKeys) {
+        if (storageKeys == null || storageKeys.isEmpty()) {
+            return;
+        }
+        List<String> keys = List.copyOf(storageKeys);
+        Runnable deleteAction = () -> keys.forEach(fileStorageService::deleteIfExists);
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    deleteAction.run();
+                }
+            });
+        } else {
+            deleteAction.run();
+        }
     }
 }

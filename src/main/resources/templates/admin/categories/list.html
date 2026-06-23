@@ -31,7 +31,13 @@
                         <td class="px-6 py-4 font-medium" th:text="${category.name}"></td>
                         <td class="px-6 py-4" th:text="${category.books.size()}"></td>
                         <td class="px-6 py-4">
-                            <a th:href="@{'/admin/categories/' + ${category.id} + '/edit'}" class="font-semibold text-bookwise-700">Edit</a>
+                            <div class="flex flex-wrap gap-2">
+                                <a th:href="@{'/admin/categories/' + ${category.id} + '/edit'}" class="font-semibold text-bookwise-700">Edit</a>
+                                <form th:action="@{'/admin/categories/' + ${category.id} + '/delete'}" method="post" onsubmit="return confirm('Delete this category?');">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button class="font-semibold text-rose-700">Delete</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     </tbody>

@@ -41,6 +41,15 @@ public class AuthorService {
         return authorRepository.save(author);
     }
 
+    @Transactional
+    public void delete(Long id) {
+        Author author = getById(id);
+        if (authorRepository.existsLinkedToBooks(id)) {
+            throw new IllegalArgumentException("Author cannot be deleted while it is still assigned to books.");
+        }
+        authorRepository.delete(author);
+    }
+
     private void map(Author author, AuthorForm form) {
         author.setFullName(form.getFullName().trim());
         author.setBiography(form.getBiography());

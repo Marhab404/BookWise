@@ -32,7 +32,7 @@ public class AdminPaymentController {
 
     @GetMapping
     public String list(Model model) {
-        model.addAttribute("payments", paymentService.listPendingReviews());
+        model.addAttribute("payments", paymentService.listAll());
         return "admin/payments/list";
     }
 

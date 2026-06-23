@@ -11,5 +11,7 @@ public interface BookFileRepository extends JpaRepository<BookFile, Long> {
 
     Optional<BookFile> findTopByBookIdOrderByCreatedAtAsc(Long bookId);
 
+    Optional<BookFile> findByIdAndBookId(Long id, Long bookId);
+
     Optional<BookFile> findByStorageKey(String storageKey);
 }

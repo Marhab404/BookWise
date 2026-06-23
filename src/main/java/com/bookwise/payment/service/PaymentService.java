@@ -38,6 +38,10 @@ public class PaymentService {
         return paymentRepository.findByStatusOrderBySubmittedAtAsc(PaymentStatus.PROOF_SUBMITTED);
     }
 
+    public List<Payment> listAll() {
+        return paymentRepository.findAll();
+    }
+
     public Payment getForAdmin(Long paymentId) {
         return paymentRepository.findWithOrderAndUserById(paymentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found"));
