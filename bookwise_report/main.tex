@@ -1,0 +1,1000 @@
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{tikz}
+
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,shapes.multipart,fit,calc}
+
+\geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=black,
+    pdftitle={Rapport PFA - BookWise},
+    pdfauthor={Souhail Hajji, Dikra Benabdessadek}
+}
+
+\setlength{\parindent}{0.8cm}
+\setlength{\parskip}{0.25em}
+\setlength{\textfloatsep}{0.7em plus 0.2em minus 0.2em}
+\setlength{\floatsep}{0.7em plus 0.2em minus 0.2em}
+\setlength{\intextsep}{0.7em plus 0.2em minus 0.2em}
+\setlength{\abovecaptionskip}{0.45em}
+\setlength{\belowcaptionskip}{0.25em}
+\renewcommand{\baselinestretch}{1.15}
+\renewcommand{\arraystretch}{1.25}
+\raggedbottom
+\renewcommand{\bibname}{References}
+
+\definecolor{bookwiseGreen}{HTML}{0F766E}
+\definecolor{bookwiseDark}{HTML}{042F2E}
+\definecolor{bookwiseLight}{HTML}{ECFEFF}
+\definecolor{softGray}{HTML}{F1F5F9}
+
+\newcommand{\chapterintro}[1]{
+    \section*{Introduction}
+    \vspace{-0.5em}
+    \addcontentsline{toc}{section}{Introduction}
+    #1
+}
+
+\newcommand{\chapterconclusion}[1]{
+    \section*{Conclusion}
+    \vspace{-0.5em}
+    \addcontentsline{toc}{section}{Conclusion}
+    #1
+}
+
+\newcommand{\interfacescreenshot}[3]{
+    \begin{figure}[!htbp]
+        \centering
+        \includegraphics[width=0.9\textwidth,height=0.56\textheight,keepaspectratio]{#2}
+        \caption{#1}
+        \vspace{-0.5em}
+        {\small #3\par}
+    \end{figure}
+}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \vspace*{0.2cm}
+    \includegraphics[width=0.95\textwidth]{assets/cover.png}
+
+    \vspace{1.0cm}
+    {\LARGE \textbf{Rapport de projet fin d'annee}\par}
+    \vspace{0.55cm}
+    {\Large Sous le theme :\par}
+    \vspace{0.4cm}
+    {\Large \textbf{Conception et Developpement d'une Application Web}\par}
+    \vspace{0.25cm}
+    {\Large \textbf{de Bibliotheque Numerique : BookWise}\par}
+
+    \vspace{0.7cm}
+    \rule{0.82\textwidth}{0.4pt}
+    \vspace{0.6cm}
+
+    {\Large \textbf{Realise par :}\par}
+    \vspace{0.25cm}
+    {\large Souhail Hajji\par}
+    {\large Dikra Benabdessadek\par}
+
+    \vspace{0.65cm}
+    {\Large \textbf{Encadre par :}\par}
+    \vspace{0.25cm}
+    {\large Mme. Aarich Mounia\par}
+
+    \vspace{0.65cm}
+    \rule{0.82\textwidth}{0.4pt}
+    \vspace{0.6cm}
+
+    {\large \textbf{Filiere :} Ingenierie Informatique et Reseaux\par}
+    \vspace{0.25cm}
+    {\large \textbf{Specialite :} Developpement Digital et Systeme d'Information\par}
+    \vspace{0.25cm}
+    {\large \textbf{Niveau :} 2eme annee Cycle d'Ingenierie\par}
+
+    \vfill
+    {\large \textbf{Annee Universitaire :} 2025/2026\par}
+\end{titlepage}
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\chapter*{Dedicace}
+\addcontentsline{toc}{chapter}{Dedicace}
+
+A ceux dont les noms ne figurent pas forcement dans les lignes techniques de ce rapport, mais dont le soutien a accompagne chaque etape de ce travail.
+
+A nos familles, qui nous ont soutenus avec patience et confiance pendant les moments de doute, de recherche et de concentration. Leur presence a ete une source de motivation constante et un appui essentiel pour mener ce projet jusqu'a son aboutissement.
+
+A nos parents, pour leur encouragement, leur confiance et les valeurs de perseverance qu'ils nous ont transmises. Ce travail est le fruit de nos efforts, mais aussi de l'amour, du soutien et des sacrifices qu'ils nous ont toujours offerts.
+
+Nous dedions ce projet a toutes les personnes qui ont cru en nous et qui ont contribue, directement ou indirectement, a notre progression academique et personnelle.
+
+\chapter*{Remerciements}
+\addcontentsline{toc}{chapter}{Remerciements}
+
+Nous tenons tout d'abord a exprimer notre profonde gratitude a notre encadrante, Madame Aarich Mounia, pour son accompagnement, ses conseils et ses orientations tout au long de la realisation de ce projet. Son suivi nous a permis de mieux organiser notre travail, de clarifier nos choix techniques et d'ameliorer progressivement la qualite de notre application.
+
+Nous adressons egalement nos remerciements a l'ensemble de l'equipe pedagogique de l'Ecole Marocaine des Sciences de l'Ingenieur pour la qualite de l'enseignement dispense et pour les competences acquises durant notre parcours. Les connaissances en developpement web, conception logicielle, bases de donnees et securite applicative ont constitue une base importante pour la realisation de BookWise.
+
+Enfin, nous remercions toutes les personnes qui nous ont soutenus, encourages et conseilles pendant cette experience. Leur aide a contribue a la reussite de ce projet et a notre evolution en tant que futurs ingenieurs.
+
+\chapter*{Resume}
+\addcontentsline{toc}{chapter}{Resume}
+
+Ce rapport presente la conception et le developpement de \textbf{BookWise}, une application web de bibliotheque numerique permettant de consulter un catalogue de livres, d'effectuer des commandes, de soumettre une preuve de paiement par virement bancaire et d'acceder aux ouvrages numeriques apres validation administrative.
+
+Le projet repond a une problematique liee a la centralisation de la gestion des livres numeriques, des auteurs, des categories, des commandes, des paiements et des droits d'acces. BookWise propose une interface web claire et securisee destinee a deux principaux acteurs : le lecteur, qui parcourt le catalogue et accede a sa bibliotheque personnelle, et l'administrateur, qui gere les ressources, valide les paiements et supervise l'activite de la plateforme.
+
+L'application a ete realisee avec \textbf{Spring Boot 3.4.5}, \textbf{Java 21}, \textbf{Spring MVC}, \textbf{Thymeleaf}, \textbf{Spring Security}, \textbf{Spring Data JPA} et \textbf{PostgreSQL}. Elle integre une authentification basee sur des jetons JWT stockes dans des cookies, un stockage local securise des couvertures, fichiers numeriques et preuves de paiement, ainsi qu'un chatbot connecte a Gemini. Ce chatbot assiste les lecteurs dans la consultation du catalogue et permet aux administrateurs de recevoir des propositions d'actions confirmees pour la gestion des livres, auteurs et categories.
+
+Ce travail nous a permis de mettre en pratique nos connaissances en developpement web, architecture logicielle, securite, persistance des donnees et ergonomie d'interface, tout en construisant une solution complete adaptee a un besoin reel de gestion de bibliotheque numerique.
+
+\textbf{Mots cles :} BookWise, bibliotheque numerique, Spring Boot, Thymeleaf, Spring Security, PostgreSQL, JWT, paiement par virement, chatbot, Gemini.
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+This report presents the design and development of \textbf{BookWise}, a digital library web application that allows users to browse a book catalog, create orders, submit bank-transfer payment proofs, and access purchased digital books after administrative validation.
+
+The project addresses the need to centralize the management of digital books, authors, categories, orders, payments, and access rights. BookWise provides a clear and secure web interface for two main actors: the reader, who browses the catalog and accesses a personal library, and the administrator, who manages catalog resources, reviews payments, and supervises platform activity.
+
+The application was built with \textbf{Spring Boot 3.4.5}, \textbf{Java 21}, \textbf{Spring MVC}, \textbf{Thymeleaf}, \textbf{Spring Security}, \textbf{Spring Data JPA}, and \textbf{PostgreSQL}. It includes JWT cookie-based authentication, secure local storage for book covers, digital files and payment proofs, and a Gemini-backed chatbot. The chatbot helps readers with catalog questions and enables administrators to receive confirmable proposed actions for managing books, authors, and categories.
+
+This work allowed us to apply our knowledge of web development, software architecture, security, data persistence and user interface design while building a complete solution for digital library management.
+
+\textbf{Keywords:} BookWise, digital library, Spring Boot, Thymeleaf, Spring Security, PostgreSQL, JWT, bank transfer payment, chatbot, Gemini.
+
+\begingroup
+\footnotesize
+\setlength{\parskip}{0pt}
+\renewcommand{\baselinestretch}{0.95}\selectfont
+\tableofcontents
+\endgroup
+\clearpage
+\begingroup
+\footnotesize
+\setlength{\parskip}{0pt}
+\renewcommand{\baselinestretch}{0.95}\selectfont
+\listoffigures
+\endgroup
+\clearpage
+\begingroup
+\footnotesize
+\setlength{\parskip}{0pt}
+\renewcommand{\baselinestretch}{0.95}\selectfont
+\listoftables
+\endgroup
+\clearpage
+
+\chapter*{Introduction Generale}
+\addcontentsline{toc}{chapter}{Introduction Generale}
+
+La transformation numerique a profondement modifie les habitudes de lecture, d'achat et d'acces aux contenus. Les lecteurs souhaitent aujourd'hui consulter des catalogues en ligne, acheter des ouvrages a distance et acceder rapidement aux fichiers numeriques associes. Parallelement, les gestionnaires de bibliotheques ou de plateformes de livres numeriques ont besoin d'outils fiables pour organiser les livres, suivre les commandes, verifier les paiements et garantir que seuls les utilisateurs autorises accedent aux fichiers.
+
+Dans ce contexte, la mise en place d'une application web dediee constitue une solution pertinente. Elle permet de centraliser les donnees, de reduire les manipulations manuelles et d'offrir une experience fluide aux utilisateurs. Le projet \textbf{BookWise} s'inscrit dans cette logique. Il propose une plateforme de bibliotheque numerique qui combine un catalogue public, un espace lecteur, un processus de paiement par virement bancaire, un espace administrateur et un chatbot intelligent.
+
+Le systeme repose sur une architecture Spring Boot server-rendered. Les pages sont generees avec Thymeleaf, la securite est assuree par Spring Security et des jetons JWT, les donnees sont gerees avec Spring Data JPA et PostgreSQL, tandis que les fichiers numeriques sont stockes dans un espace local organise. Le projet integre aussi une assistance conversationnelle basee sur Gemini afin de faciliter l'interaction avec le catalogue et certaines operations d'administration.
+
+Ce rapport presente les differentes etapes de conception et de realisation du projet BookWise. Il est structure en quatre chapitres :
+
+Le premier chapitre presente le contexte general du projet, l'etude de l'existant, la problematique, la solution proposee, les objectifs, les missions et le suivi du projet.
+
+Le deuxieme chapitre porte sur l'etude des besoins. Il decrit les besoins fonctionnels, le perimetre du projet, la structure generale du site, les fonctionnalites, les besoins ergonomiques, graphiques et techniques.
+
+Le troisieme chapitre est consacre a la conception. Il presente les acteurs, les cas d'utilisation, les sequences principales et le modele de classes du systeme.
+
+Le quatrieme chapitre expose la realisation du projet a travers les interfaces et les modules principaux de BookWise.
+
+\chapter{Contexte general du projet}
+
+\begin{center}
+    \vspace*{0.25cm}
+    \Large\textbf{Chapitre I : Contexte general du projet}
+    \vspace{0.55cm}
+
+    \begin{tabular}{ll}
+        I.1 & Etude de l'existant\\
+        I.2 & Problematique\\
+        I.3 & Solution proposee\\
+        I.4 & Objectifs du projet\\
+        I.5 & Missions du projet\\
+        I.6 & Gestion et suivi du projet
+    \end{tabular}
+\end{center}
+
+\chapterintro{
+Ce chapitre presente le cadre general de BookWise. Il met en evidence les limites des methodes classiques de gestion des livres numeriques et explique comment une application web centralisee peut ameliorer l'organisation, la securite et l'experience utilisateur.
+}
+
+\newpage
+\section{Etude de l'existant}
+
+De nombreuses petites structures gerent encore leurs livres numeriques, leurs commandes et leurs paiements avec des outils separes : fichiers tableurs, dossiers partages, echanges par messagerie et validations manuelles. Cette organisation peut fonctionner pour un faible volume d'activite, mais elle devient rapidement difficile a maintenir lorsque le catalogue s'agrandit et que le nombre d'utilisateurs augmente.
+
+Les plateformes de vente de livres existantes proposent souvent un paiement automatise et une livraison immediate. Cependant, dans certains contextes, le paiement par virement bancaire reste necessaire ou prefere. Ce mode de paiement impose une verification humaine de la preuve de transfert et un controle precis de l'etat des commandes. Sans application adaptee, cette verification peut entrainer des erreurs, des retards et une mauvaise tracabilite.
+
+L'existant montre donc plusieurs limites : dispersion des informations, absence de suivi centralise, controle d'acces insuffisant aux fichiers numeriques, difficulte a retrouver l'historique des commandes, et charge administrative elevee pour verifier les paiements.
+
+\section{Problematique}
+
+La problematique principale du projet peut etre formulee ainsi :
+
+\begin{quote}
+Comment concevoir une application web securisee permettant de gerer un catalogue de livres numeriques, les commandes, les paiements par virement bancaire et l'acces aux fichiers achetes, tout en offrant une interface simple pour les lecteurs et les administrateurs ?
+\end{quote}
+
+Cette problematique implique plusieurs enjeux. Le systeme doit garantir que seuls les livres publies sont visibles publiquement, que les commandes sont correctement associees aux utilisateurs, que les preuves de paiement sont stockees et examinees par un administrateur, et que l'acces aux fichiers numeriques n'est autorise qu'apres validation du paiement.
+
+\section{Solution proposee}
+
+BookWise propose une plateforme web centralisee qui organise le cycle complet d'achat et d'acces aux livres numeriques. Le lecteur peut creer un compte, parcourir le catalogue, consulter les details d'un livre, selectionner un ou plusieurs ouvrages, generer une commande et soumettre une preuve de virement bancaire. Une fois la preuve examinee et approuvee par un administrateur, les livres deviennent disponibles dans la bibliotheque personnelle du lecteur.
+
+L'administrateur dispose d'un espace dedie pour gerer les livres, les auteurs, les categories et les paiements. Il peut publier ou retirer un livre du catalogue, ajouter des fichiers PDF ou EPUB, consulter les preuves de paiement et approuver ou rejeter les demandes. Le chatbot integre complete cette solution en fournissant une assistance contextuelle : le lecteur peut poser des questions sur le catalogue, tandis que l'administrateur peut recevoir des propositions d'actions sur les donnees de reference.
+
+\section{Objectifs du projet}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        objective/.style={draw=bookwiseGreen, rounded corners=5pt, fill=bookwiseLight, align=center, minimum width=4.3cm, minimum height=1.1cm},
+        center/.style={draw=bookwiseDark, rounded corners=5pt, fill=bookwiseGreen, text=white, align=center, minimum width=4.6cm, minimum height=1.2cm},
+        arrow/.style={-{Stealth[length=2mm]}, thick, bookwiseGreen}
+    ]
+        \node[center] (main) {Objectifs\\BookWise};
+        \node[objective, above left=1.0cm and 1.1cm of main] (o1) {Centraliser\\le catalogue};
+        \node[objective, above right=1.0cm and 1.1cm of main] (o2) {Securiser\\les acces};
+        \node[objective, left=1.7cm of main] (o3) {Suivre\\les commandes};
+        \node[objective, right=1.7cm of main] (o4) {Valider\\les paiements};
+        \node[objective, below left=1.0cm and 1.1cm of main] (o5) {Livrer les fichiers\\aux acheteurs};
+        \node[objective, below right=1.0cm and 1.1cm of main] (o6) {Assister via\\chatbot};
+        \draw[arrow] (main) -- (o1);
+        \draw[arrow] (main) -- (o2);
+        \draw[arrow] (main) -- (o3);
+        \draw[arrow] (main) -- (o4);
+        \draw[arrow] (main) -- (o5);
+        \draw[arrow] (main) -- (o6);
+    \end{tikzpicture}
+    \caption{Les objectifs du projet BookWise}
+\end{figure}
+
+Les objectifs du projet sont les suivants :
+
+\begin{itemize}
+    \item proposer un catalogue numerique clair et accessible ;
+    \item permettre aux lecteurs de commander des livres et de suivre l'etat de leurs paiements ;
+    \item assurer un acces protege aux fichiers numeriques apres validation ;
+    \item offrir un espace administrateur pour la gestion du catalogue et des paiements ;
+    \item mettre en place une architecture robuste avec Spring Boot, Spring Security et PostgreSQL ;
+    \item integrer un chatbot pour ameliorer l'assistance et l'administration.
+\end{itemize}
+
+\section{Les missions du projet}
+
+\begin{figure}[!htbp]
+    \centering
+    \resizebox{0.95\textwidth}{!}{%
+    \begin{tikzpicture}[
+        mission/.style={draw=black!45, rounded corners=4pt, fill=softGray, align=center, minimum width=2.65cm, minimum height=1.0cm, font=\small},
+        arrow/.style={-{Stealth[length=2mm]}, thick, bookwiseGreen}
+    ]
+        \node[mission] (m1) {Analyse\\de l'existant};
+        \node[mission, right=0.28cm of m1] (m2) {Etude\\des besoins};
+        \node[mission, right=0.28cm of m2] (m3) {Conception\\UML};
+        \node[mission, right=0.28cm of m3] (m4) {Realisation\\Spring Boot};
+        \node[mission, right=0.28cm of m4] (m5) {Tests et\\validation};
+        \draw[arrow] (m1) -- (m2);
+        \draw[arrow] (m2) -- (m3);
+        \draw[arrow] (m3) -- (m4);
+        \draw[arrow] (m4) -- (m5);
+    \end{tikzpicture}
+    }
+    \caption{Les missions du projet}
+\end{figure}
+
+Les missions realisees ont suivi une demarche progressive. Nous avons d'abord analyse les besoins d'une plateforme de bibliotheque numerique, puis identifie les acteurs, les principales donnees et les parcours utilisateurs. Ensuite, nous avons concu les cas d'utilisation, les sequences et le modele de donnees. Enfin, nous avons developpe l'application avec une organisation par couches : controleurs, services, repositories, entites et vues Thymeleaf.
+
+\section{Gestion et suivi du projet}
+
+\subsection{Suivi des taches avec Jira}
+
+Le suivi des taches peut etre organise sous forme de tableau Kanban de type Jira. Les fonctionnalites sont decoupees en tickets : authentification, catalogue, checkout, paiement, bibliotheque personnelle, administration, chatbot et tests. Chaque ticket passe par les etats \textit{a faire}, \textit{en cours} et \textit{termine}, ce qui permet de visualiser l'avancement du projet et de prioriser les travaux restants.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        col/.style={draw=black!30, fill=softGray, rounded corners=4pt, minimum width=4cm, minimum height=5cm, anchor=north},
+        ticket/.style={draw=bookwiseGreen, fill=white, rounded corners=3pt, minimum width=3.3cm, minimum height=0.7cm, align=center, font=\small}
+    ]
+        \node[col] (todo) at (0,0) {};
+        \node[col] (doing) at (4.6,0) {};
+        \node[col] (done) at (9.2,0) {};
+        \node[font=\bfseries] at (0,-0.35) {A faire};
+        \node[font=\bfseries] at (4.6,-0.35) {En cours};
+        \node[font=\bfseries] at (9.2,-0.35) {Termine};
+        \node[ticket] at (0,-1.3) {Tests fonctionnels};
+        \node[ticket] at (0,-2.2) {Documentation};
+        \node[ticket] at (4.6,-1.3) {Chatbot admin};
+        \node[ticket] at (4.6,-2.2) {Validation paiement};
+        \node[ticket] at (9.2,-1.3) {Authentification};
+        \node[ticket] at (9.2,-2.2) {Catalogue};
+        \node[ticket] at (9.2,-3.1) {Bibliotheque};
+    \end{tikzpicture}
+    \caption{Interface de gestion des taches de type Jira}
+\end{figure}
+
+\subsection{Gestion du code source avec GitHub}
+
+La gestion du code source repose sur Git et peut etre centralisee sur GitHub. Cette approche permet de suivre l'historique des modifications, de separer les evolutions par branches et de conserver une trace claire des ajouts effectues dans le projet. Les commits documentent les etapes importantes : creation des entites, mise en place de la securite, developpement des pages, integration du paiement, stockage des fichiers et ajout du chatbot.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        commit/.style={circle, draw=bookwiseGreen, fill=bookwiseGreen, minimum size=0.25cm},
+        label/.style={align=center, font=\small}
+    ]
+        \draw[thick, bookwiseGreen] (0,0) -- (10,0);
+        \foreach \x/\txt in {0/Auth,2/Catalogue,4/Checkout,6/Paiements,8/Admin,10/Chatbot} {
+            \node[commit] at (\x,0) {};
+            \node[label, below=0.35cm] at (\x,0) {\txt};
+        }
+        \draw[thick, bookwiseGreen] (4,0) .. controls (5,1.2) and (6,1.2) .. (7,0);
+        \node[label, above=1.15cm] at (5.5,0) {branche\\fonctionnelle};
+    \end{tikzpicture}
+    \caption{Gestion du code source avec Git et GitHub}
+\end{figure}
+
+\chapterconclusion{
+Ce chapitre a presente le contexte general de BookWise, les limites de l'existant, la problematique et la solution proposee. Il a egalement expose les objectifs, les missions et l'organisation du suivi du projet. Le chapitre suivant detaille les besoins fonctionnels, ergonomiques, graphiques et techniques.
+}
+
+\chapter{L'etude des besoins}
+
+\begin{center}
+    \vspace*{0.25cm}
+    \Large\textbf{Chapitre II : L'etude des besoins}
+    \vspace{0.55cm}
+
+    \begin{tabular}{ll}
+        II.1 & Description des besoins fonctionnels\\
+        II.2 & Description des besoins ergonomiques\\
+        II.3 & Description des besoins graphiques\\
+        II.4 & Description des besoins techniques
+    \end{tabular}
+\end{center}
+
+\chapterintro{
+L'etude des besoins permet de definir ce que le systeme doit offrir aux utilisateurs. Dans BookWise, les besoins se structurent principalement autour de deux acteurs : le lecteur et l'administrateur. Cette section precise les fonctionnalites attendues, le perimetre du projet et les choix techniques retenus.
+}
+
+\newpage
+\section{Description des besoins fonctionnels}
+
+\subsection{Les besoins fonctionnels}
+
+\begin{longtable}{|p{3.2cm}|p{10.4cm}|}
+    \caption{Les besoins fonctionnels de BookWise}\\
+    \hline
+    \textbf{Acteur} & \textbf{Besoins fonctionnels}\\
+    \hline
+    Lecteur & Creer un compte, se connecter, consulter le catalogue, voir les details d'un livre, selectionner des livres, creer une commande, consulter ses commandes, soumettre une preuve de paiement, acceder aux livres achetes, lire ou telecharger un fichier numerique.\\
+    \hline
+    Administrateur & Gerer les livres, auteurs et categories, publier ou retirer un livre, consulter les commandes et paiements, visualiser les preuves de paiement, approuver ou rejeter un paiement, acceder au tableau de bord, utiliser le chatbot pour proposer des actions confirmees.\\
+    \hline
+    Systeme & Authentifier les utilisateurs, controler les roles, securiser l'acces aux fichiers, stocker les preuves, maintenir les statuts de commande et de paiement, proteger les operations sensibles par CSRF et autorisations.\\
+    \hline
+\end{longtable}
+
+\subsection{Perimetre du projet}
+
+Le perimetre de BookWise comprend la gestion d'une bibliotheque numerique commerciale reposant sur un paiement par virement bancaire. L'application prend en charge l'inscription, la connexion, la consultation du catalogue, la commande, la soumission d'une preuve de paiement, la validation par l'administrateur et l'acces aux fichiers achetes.
+
+Le projet se limite au parcours actuellement implemente : catalogue, commande, preuve de virement, validation administrative et acces aux fichiers achetes. Les modules non presents dans le code ne sont pas decrits comme des fonctionnalites realisees.
+
+\subsection{Description de la structure generale du site}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        page/.style={draw=bookwiseGreen, rounded corners=4pt, fill=bookwiseLight, minimum width=3.5cm, minimum height=0.9cm, align=center, font=\small},
+        arrow/.style={-{Stealth[length=2mm]}, thick}
+    ]
+        \node[page] (home) {Accueil};
+        \node[page, below left=0.9cm and 1.2cm of home] (catalog) {Catalogue};
+        \node[page, below=0.9cm of home] (auth) {Connexion\\Inscription};
+        \node[page, below right=0.9cm and 1.2cm of home] (admin) {Espace\\administrateur};
+        \node[page, below=0.9cm of catalog] (detail) {Details livre};
+        \node[page, below=0.9cm of detail] (checkout) {Checkout};
+        \node[page, below=0.9cm of checkout] (orders) {Mes commandes};
+        \node[page, below=0.9cm of orders] (library) {Ma bibliotheque};
+        \node[page, below=0.9cm of admin] (adminpages) {Livres\\Auteurs\\Categories\\Paiements};
+        \draw[arrow] (home) -- (catalog);
+        \draw[arrow] (home) -- (auth);
+        \draw[arrow] (home) -- (admin);
+        \draw[arrow] (catalog) -- (detail);
+        \draw[arrow] (detail) -- (checkout);
+        \draw[arrow] (checkout) -- (orders);
+        \draw[arrow] (orders) -- (library);
+        \draw[arrow] (admin) -- (adminpages);
+    \end{tikzpicture}
+    \caption{Structure generale du site BookWise}
+\end{figure}
+
+\subsection{Fonctionnalites du projet}
+
+\begin{longtable}{|p{4cm}|p{9.6cm}|}
+    \caption{Fonctionnalites du projet}\\
+    \hline
+    \textbf{Module} & \textbf{Fonctionnalites}\\
+    \hline
+    Authentification & Inscription lecteur, connexion, deconnexion, generation de jeton JWT, stockage du jeton dans un cookie, redirection vers la page demandee.\\
+    \hline
+    Catalogue & Affichage des livres publies, details d'un livre, couverture, auteurs, categories, prix, description.\\
+    \hline
+    Checkout & Selection d'un ou plusieurs livres, verification des doublons, controle de la devise, creation d'une commande et d'un paiement en attente.\\
+    \hline
+    Paiement & Affichage des instructions de virement, depot d'une preuve PDF ou image, suivi du statut, validation ou rejet par l'administrateur.\\
+    \hline
+    Bibliotheque & Affichage des livres achetes apres paiement approuve, lecture en ligne et telechargement des fichiers PDF ou EPUB.\\
+    \hline
+    Administration & Gestion des livres, auteurs, categories, fichiers numeriques, publication, suppression controlee et revue des paiements.\\
+    \hline
+    Chatbot & Assistance lecteur limitee au catalogue, assistance administrateur avec propositions d'actions confirmees.\\
+    \hline
+\end{longtable}
+
+\section{Description des besoins ergonomiques}
+
+\subsection{Les regles ergonomiques}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        rule/.style={draw=bookwiseGreen, rounded corners=4pt, fill=bookwiseLight, align=center, minimum width=4.2cm, minimum height=1cm}
+    ]
+        \node[rule] (r1) {Navigation simple};
+        \node[rule, right=0.6cm of r1] (r2) {Feedback visible};
+        \node[rule, below=0.6cm of r1] (r3) {Formulaires clairs};
+        \node[rule, below=0.6cm of r2] (r4) {Acces rapide};
+        \node[rule, below=0.6cm of r3] (r5) {Messages d'erreur};
+        \node[rule, below=0.6cm of r4] (r6) {Responsive design};
+    \end{tikzpicture}
+    \caption{Les regles ergonomiques}
+\end{figure}
+
+L'interface doit etre intuitive et coherent. La barre de navigation donne acces au catalogue, aux commandes, a la bibliotheque personnelle et a l'administration selon le role connecte. Les messages de confirmation et d'erreur doivent accompagner les actions importantes : creation d'une commande, depot d'une preuve, validation ou rejet d'un paiement.
+
+\subsection{La charte ergonomique}
+
+\begin{longtable}{|p{4cm}|p{9.6cm}|}
+    \caption{La charte ergonomique du projet}\\
+    \hline
+    \textbf{Element} & \textbf{Description}\\
+    \hline
+    Navigation & Menu principal simple avec acces conditionnel selon l'authentification et le role.\\
+    \hline
+    Lisibilite & Textes courts, titres visibles, cartes de livres et tableaux administratifs structures.\\
+    \hline
+    Feedback & Messages flash pour confirmer une action reussie ou signaler une erreur.\\
+    \hline
+    Securite percue & Pages protegees, statut de paiement explicite et acces aux fichiers uniquement apres validation.\\
+    \hline
+    Adaptabilite & Utilisation de classes Tailwind pour assurer un affichage moderne et responsive.\\
+    \hline
+\end{longtable}
+
+\section{Description des besoins graphiques}
+
+La charte graphique de BookWise repose sur une identite visuelle sobre et moderne. La couleur dominante est un vert emeraude associe a des fonds clairs. Les livres sont presentes sous forme de cartes avec couverture, titre, auteur, description courte et prix. Les pages administratives privilegient des tableaux lisibles et des formulaires structures afin de faciliter la gestion quotidienne.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \node[draw=bookwiseGreen, fill=bookwiseGreen, minimum width=3cm, minimum height=1cm, text=white] at (0,0) {Vert principal};
+        \node[draw=bookwiseDark, fill=bookwiseDark, minimum width=3cm, minimum height=1cm, text=white] at (3.6,0) {Vert sombre};
+        \node[draw=black!20, fill=bookwiseLight, minimum width=3cm, minimum height=1cm] at (7.2,0) {Fond clair};
+        \node[draw=black!20, fill=softGray, minimum width=3cm, minimum height=1cm] at (10.8,0) {Gris doux};
+    \end{tikzpicture}
+    \caption{Les besoins graphiques de BookWise}
+\end{figure}
+
+\section{Description des besoins techniques}
+
+\subsection{Technologies utilisees}
+
+\begin{longtable}{|p{4cm}|p{9.6cm}|}
+    \caption{Les technologies utilisees}\\
+    \hline
+    \textbf{Technologie} & \textbf{Role dans le projet}\\
+    \hline
+    Java 21 & Langage principal de developpement backend.\\
+    \hline
+    Spring Boot 3.4.5 & Framework principal pour la configuration, les controleurs, les services et l'execution de l'application.\\
+    \hline
+    Spring MVC & Gestion des routes web et des controleurs server-rendered.\\
+    \hline
+    Thymeleaf & Moteur de templates pour generer les pages HTML cote serveur.\\
+    \hline
+    Tailwind CSS & Framework CSS utilise dans les templates pour construire une interface moderne.\\
+    \hline
+    Spring Security & Authentification, autorisations, CSRF et protection des routes.\\
+    \hline
+    JWT & Jetons d'authentification stockes dans des cookies pour identifier l'utilisateur.\\
+    \hline
+    Spring Data JPA & Couche de persistance et repositories pour les entites du domaine.\\
+    \hline
+    PostgreSQL & Base de donnees principale configuree via \texttt{DATABASE\_URL}.\\
+    \hline
+    H2 & Base de donnees en memoire utilisee pour les tests.\\
+    \hline
+    Gemini API & Service externe utilise pour alimenter l'assistant conversationnel.\\
+    \hline
+    Maven & Gestion des dependances, compilation et execution des tests.\\
+    \hline
+\end{longtable}
+
+\chapterconclusion{
+Ce chapitre a permis de definir les besoins de BookWise. Les fonctionnalites attendues sont centrees sur la consultation du catalogue, la commande, la preuve de paiement, l'acces aux fichiers et l'administration. Le chapitre suivant presente la conception qui structure ces besoins sous forme de diagrammes.
+}
+
+\chapter{La Conception}
+
+\begin{center}
+    \vspace*{0.25cm}
+    \Large\textbf{Chapitre III : La Conception}
+    \vspace{0.55cm}
+
+    \begin{tabular}{ll}
+        III.1 & Outil de modelisation utilise\\
+        III.2 & Diagrammes de cas d'utilisation\\
+        III.3 & Diagrammes de sequence\\
+        III.4 & Diagramme de classes
+    \end{tabular}
+\end{center}
+
+\chapterintro{
+La conception represente une etape essentielle pour transformer les besoins en architecture logicielle. Dans BookWise, elle permet d'identifier les acteurs, de formaliser les cas d'utilisation, de decrire les interactions principales et de structurer les entites du domaine.
+}
+
+\newpage
+\section{Outil de modelisation utilise}
+
+\begin{longtable}{|p{4cm}|p{9.6cm}|}
+    \caption{Outil de modelisation utilise}\\
+    \hline
+    \textbf{Outil} & \textbf{Utilisation}\\
+    \hline
+    UML & Representation des acteurs, cas d'utilisation, sequences et classes du systeme.\\
+    \hline
+    TikZ & Generation des diagrammes directement dans le document LaTeX afin de conserver un rapport autonome compatible avec Overleaf.\\
+    \hline
+\end{longtable}
+
+\section{Diagrammes de cas d'utilisation}
+
+\subsection{Diagramme de cas d'utilisation general}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        actor/.style={draw, circle, minimum size=0.9cm},
+        usecase/.style={draw=bookwiseGreen, ellipse, fill=bookwiseLight, align=center, minimum width=3.2cm, minimum height=0.9cm, font=\small},
+        line/.style={thick}
+    ]
+        \node[actor] (reader) at (-5,0) {};
+        \node[below=0.1cm of reader] {Lecteur};
+        \node[actor] (admin) at (5,0) {};
+        \node[below=0.1cm of admin] {Administrateur};
+
+        \node[draw, rounded corners=4pt, minimum width=8.5cm, minimum height=7cm, label=above:{Systeme BookWise}] (system) at (0,0) {};
+        \node[usecase] (uc1) at (-1.8,2.4) {S'authentifier};
+        \node[usecase] (uc2) at (-1.8,1.2) {Consulter\\catalogue};
+        \node[usecase] (uc3) at (-1.8,0) {Commander\\des livres};
+        \node[usecase] (uc4) at (-1.8,-1.2) {Soumettre preuve\\de paiement};
+        \node[usecase] (uc5) at (-1.8,-2.4) {Acceder a\\ma bibliotheque};
+        \node[usecase] (uc6) at (1.9,1.8) {Gerer catalogue};
+        \node[usecase] (uc7) at (1.9,0.6) {Valider\\paiements};
+        \node[usecase] (uc8) at (1.9,-0.6) {Consulter\\tableau de bord};
+        \node[usecase] (uc9) at (1.9,-1.8) {Utiliser\\chatbot};
+
+        \draw[line] (reader) -- (uc1);
+        \draw[line] (reader) -- (uc2);
+        \draw[line] (reader) -- (uc3);
+        \draw[line] (reader) -- (uc4);
+        \draw[line] (reader) -- (uc5);
+        \draw[line] (reader) -- (uc9);
+        \draw[line] (admin) -- (uc1);
+        \draw[line] (admin) -- (uc6);
+        \draw[line] (admin) -- (uc7);
+        \draw[line] (admin) -- (uc8);
+        \draw[line] (admin) -- (uc9);
+    \end{tikzpicture}
+    \caption{Diagramme de cas d'utilisation general}
+\end{figure}
+
+\subsection{Diagramme de cas d'utilisation de l'administrateur}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        usecase/.style={draw=bookwiseGreen, ellipse, fill=bookwiseLight, align=center, minimum width=3.5cm, minimum height=0.85cm, font=\small}
+    ]
+        \node[draw, circle, minimum size=0.9cm] (admin) at (-4,0) {};
+        \node[below=0.1cm of admin] {Administrateur};
+        \node[usecase] (u1) at (1,2.5) {Creer/modifier\\un livre};
+        \node[usecase] (u2) at (1,1.3) {Publier ou\\depublier};
+        \node[usecase] (u3) at (1,0.1) {Gerer auteurs\\et categories};
+        \node[usecase] (u4) at (1,-1.1) {Examiner preuve\\de paiement};
+        \node[usecase] (u5) at (1,-2.3) {Approuver ou\\rejeter paiement};
+        \node[usecase] (u6) at (1,-3.5) {Confirmer action\\du chatbot};
+        \foreach \uc in {u1,u2,u3,u4,u5,u6} \draw[thick] (admin) -- (\uc);
+    \end{tikzpicture}
+    \caption{Diagramme de cas d'utilisation de l'administrateur}
+\end{figure}
+
+\subsection{Diagramme de cas d'utilisation du client}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        usecase/.style={draw=bookwiseGreen, ellipse, fill=bookwiseLight, align=center, minimum width=3.5cm, minimum height=0.85cm, font=\small}
+    ]
+        \node[draw, circle, minimum size=0.9cm] (reader) at (-4,0) {};
+        \node[below=0.1cm of reader] {Lecteur};
+        \node[usecase] (u1) at (1,2.4) {Creer un compte};
+        \node[usecase] (u2) at (1,1.2) {Consulter livres\\publies};
+        \node[usecase] (u3) at (1,0) {Creer commande};
+        \node[usecase] (u4) at (1,-1.2) {Soumettre preuve\\de virement};
+        \node[usecase] (u5) at (1,-2.4) {Suivre mes\\commandes};
+        \node[usecase] (u6) at (1,-3.6) {Lire ou telecharger\\un livre};
+        \foreach \uc in {u1,u2,u3,u4,u5,u6} \draw[thick] (reader) -- (\uc);
+    \end{tikzpicture}
+    \caption{Diagramme de cas d'utilisation du client}
+\end{figure}
+
+\section{Diagrammes de sequence}
+
+\subsection{Diagramme de sequence : commander un livre par le lecteur}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        lifeline/.style={draw, minimum width=2.7cm, minimum height=0.8cm, fill=softGray},
+        msg/.style={-{Stealth[length=2mm]}, thick},
+        dashedmsg/.style={-{Stealth[length=2mm]}, thick, dashed}
+    ]
+        \node[lifeline] (user) at (0,0) {Lecteur};
+        \node[lifeline] (ctrl) at (3.4,0) {CheckoutController};
+        \node[lifeline] (service) at (7,0) {CheckoutService};
+        \node[lifeline] (db) at (10.5,0) {Repositories};
+        \foreach \x in {0,3.4,7,10.5} \draw[dashed] (\x,-0.5) -- (\x,-6);
+        \draw[msg] (0,-1) -- node[above,font=\small]{selection livres} (3.4,-1);
+        \draw[msg] (3.4,-1.8) -- node[above,font=\small]{createOrder()} (7,-1.8);
+        \draw[msg] (7,-2.6) -- node[above,font=\small]{verifier livres et droits} (10.5,-2.6);
+        \draw[dashedmsg] (10.5,-3.4) -- node[above,font=\small]{livres valides} (7,-3.4);
+        \draw[msg] (7,-4.2) -- node[above,font=\small]{sauver commande et paiement} (10.5,-4.2);
+        \draw[dashedmsg] (7,-5.0) -- node[above,font=\small]{commande creee} (3.4,-5.0);
+        \draw[dashedmsg] (3.4,-5.7) -- node[above,font=\small]{page paiement} (0,-5.7);
+    \end{tikzpicture}
+    \caption{Diagramme de sequence : commander un livre par le lecteur}
+\end{figure}
+
+\subsection{Diagramme de sequence : valider un paiement par l'administrateur}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        lifeline/.style={draw, minimum width=2.8cm, minimum height=0.8cm, fill=softGray},
+        msg/.style={-{Stealth[length=2mm]}, thick},
+        dashedmsg/.style={-{Stealth[length=2mm]}, thick, dashed}
+    ]
+        \node[lifeline] (admin) at (0,0) {Administrateur};
+        \node[lifeline] (ctrl) at (3.5,0) {AdminPaymentController};
+        \node[lifeline] (service) at (7.2,0) {PaymentService};
+        \node[lifeline] (repo) at (10.8,0) {PaymentRepository};
+        \foreach \x in {0,3.5,7.2,10.8} \draw[dashed] (\x,-0.5) -- (\x,-6);
+        \draw[msg] (0,-1) -- node[above,font=\small]{ouvrir detail paiement} (3.5,-1);
+        \draw[msg] (3.5,-1.8) -- node[above,font=\small]{getForAdmin()} (7.2,-1.8);
+        \draw[msg] (7.2,-2.6) -- node[above,font=\small]{charger paiement} (10.8,-2.6);
+        \draw[dashedmsg] (10.8,-3.4) -- node[above,font=\small]{preuve et commande} (7.2,-3.4);
+        \draw[msg] (0,-4.2) -- node[above,font=\small]{approuver/rejeter} (3.5,-4.2);
+        \draw[msg] (3.5,-5.0) -- node[above,font=\small]{approve()/reject()} (7.2,-5.0);
+        \draw[msg] (7.2,-5.7) -- node[above,font=\small]{mettre statuts a jour} (10.8,-5.7);
+    \end{tikzpicture}
+    \caption{Diagramme de sequence : valider un paiement par l'administrateur}
+\end{figure}
+
+\subsection{Diagramme de sequence : acceder a un livre achete}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        lifeline/.style={draw, minimum width=2.8cm, minimum height=0.8cm, fill=softGray},
+        msg/.style={-{Stealth[length=2mm]}, thick},
+        dashedmsg/.style={-{Stealth[length=2mm]}, thick, dashed}
+    ]
+        \node[lifeline] (reader) at (0,0) {Lecteur};
+        \node[lifeline] (ctrl) at (3.6,0) {LibraryController};
+        \node[lifeline] (service) at (7.2,0) {LibraryService};
+        \node[lifeline] (storage) at (10.8,0) {FileStorageService};
+        \foreach \x in {0,3.6,7.2,10.8} \draw[dashed] (\x,-0.5) -- (\x,-5.5);
+        \draw[msg] (0,-1) -- node[above,font=\small]{lire/telecharger} (3.6,-1);
+        \draw[msg] (3.6,-1.8) -- node[above,font=\small]{firstOwnedBookFile()} (7.2,-1.8);
+        \draw[dashedmsg] (7.2,-2.6) -- node[above,font=\small]{controle possession PAID} (7.2,-3.3);
+        \draw[msg] (3.6,-3.8) -- node[above,font=\small]{loadAsResource()} (10.8,-3.8);
+        \draw[dashedmsg] (10.8,-4.6) -- node[above,font=\small]{ressource PDF/EPUB} (3.6,-4.6);
+        \draw[dashedmsg] (3.6,-5.3) -- node[above,font=\small]{fichier protege} (0,-5.3);
+    \end{tikzpicture}
+    \caption{Diagramme de sequence : acceder a un livre achete}
+\end{figure}
+
+\subsection{Diagramme de sequence : action proposee par le chatbot}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        lifeline/.style={draw, minimum width=2.6cm, minimum height=0.8cm, fill=softGray},
+        msg/.style={-{Stealth[length=2mm]}, thick},
+        dashedmsg/.style={-{Stealth[length=2mm]}, thick, dashed}
+    ]
+        \node[lifeline] (admin) at (0,0) {Administrateur};
+        \node[lifeline] (ctrl) at (3.2,0) {ChatbotController};
+        \node[lifeline] (service) at (6.6,0) {ChatbotService};
+        \node[lifeline] (gemini) at (9.8,0) {GeminiClient};
+        \foreach \x in {0,3.2,6.6,9.8} \draw[dashed] (\x,-0.5) -- (\x,-6.2);
+        \draw[msg] (0,-1) -- node[above,font=\small]{message admin} (3.2,-1);
+        \draw[msg] (3.2,-1.8) -- node[above,font=\small]{handleMessage()} (6.6,-1.8);
+        \draw[msg] (6.6,-2.6) -- node[above,font=\small]{prompt + contexte} (9.8,-2.6);
+        \draw[dashedmsg] (9.8,-3.4) -- node[above,font=\small]{action proposee} (6.6,-3.4);
+        \draw[dashedmsg] (6.6,-4.2) -- node[above,font=\small]{ActionPreview} (3.2,-4.2);
+        \draw[msg] (0,-5.0) -- node[above,font=\small]{confirmer} (3.2,-5.0);
+        \draw[msg] (3.2,-5.8) -- node[above,font=\small]{executeAction()} (6.6,-5.8);
+    \end{tikzpicture}
+    \caption{Diagramme de sequence : action proposee par le chatbot}
+\end{figure}
+
+\section{Diagramme de classes}
+
+\begin{figure}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tikzpicture}[
+        class/.style={draw=bookwiseGreen, rectangle split, rectangle split parts=3, fill=bookwiseLight, text width=3.2cm, font=\scriptsize},
+        rel/.style={-{Stealth[length=2mm]}, thick}
+    ]
+        \node[class] (user) at (0,0) {
+            \textbf{User}
+            \nodepart{second}
+            id\\fullName\\email\\passwordHash\\role
+            \nodepart{third}
+            ADMIN, READER
+        };
+        \node[class] (order) at (4.4,0) {
+            \textbf{PurchaseOrder}
+            \nodepart{second}
+            id\\totalAmount\\currency\\status
+            \nodepart{third}
+            PENDING, PAID, REJECTED
+        };
+        \node[class] (item) at (8.8,0) {
+            \textbf{OrderItem}
+            \nodepart{second}
+            id\\unitPriceAmount
+            \nodepart{third}
+            lie commande et livre
+        };
+        \node[class] (payment) at (4.4,-4.0) {
+            \textbf{Payment}
+            \nodepart{second}
+            method\\status\\transferReference\\receiptFileName
+            \nodepart{third}
+            APPROVED, REJECTED
+        };
+        \node[class] (book) at (8.8,-4.0) {
+            \textbf{Book}
+            \nodepart{second}
+            title\\isbn\\language\\priceAmount\\published
+            \nodepart{third}
+            catalogue numerique
+        };
+        \node[class] (file) at (13.2,-4.0) {
+            \textbf{BookFile}
+            \nodepart{second}
+            fileName\\storageKey\\fileType\\fileSize
+            \nodepart{third}
+            PDF, EPUB
+        };
+        \node[class] (author) at (8.8,-8.0) {
+            \textbf{Author}
+            \nodepart{second}
+            fullName\\biography
+            \nodepart{third}
+            auteur du livre
+        };
+        \node[class] (category) at (13.2,-8.0) {
+            \textbf{Category}
+            \nodepart{second}
+            name\\description
+            \nodepart{third}
+            classification
+        };
+        \draw[rel] (user) -- node[above,font=\scriptsize]{1..*} (order);
+        \draw[rel] (order) -- node[above,font=\scriptsize]{1..*} (item);
+        \draw[rel] (order) -- node[right,font=\scriptsize]{1..1} (payment);
+        \draw[rel] (item) -- node[right,font=\scriptsize]{*..1} (book);
+        \draw[rel] (book) -- node[above,font=\scriptsize]{1..*} (file);
+        \draw[rel] (book) -- node[right,font=\scriptsize]{*..*} (author);
+        \draw[rel] (book) -- node[right,font=\scriptsize]{*..*} (category);
+    \end{tikzpicture}}
+    \caption{Diagramme de classes de BookWise}
+\end{figure}
+
+\chapterconclusion{
+La conception a permis de representer les principaux acteurs, les cas d'utilisation et les interactions de BookWise. Le modele de classes met en evidence les entites centrales du projet : utilisateurs, livres, auteurs, categories, commandes, paiements et fichiers numeriques. Le chapitre suivant presente la realisation concrete de l'application.
+}
+
+\chapter{La Realisation du projet}
+
+\begin{center}
+    \vspace*{0.25cm}
+    \Large\textbf{Chapitre IV : La Realisation du projet}
+    \vspace{0.55cm}
+
+    \begin{tabular}{ll}
+        IV.1 & Interfaces de l'application\\
+        IV.1.a & Espace client\\
+        IV.1.b & Espace administrateur\\
+        IV.1.c & Chatbot et assistance
+    \end{tabular}
+\end{center}
+
+\chapterintro{
+Ce chapitre presente les principaux resultats de la realisation de BookWise. L'application est organisee autour d'interfaces server-rendered en Thymeleaf et de modules Spring Boot permettant de traiter les parcours utilisateur, les commandes, les paiements, la bibliotheque personnelle et l'administration.
+}
+
+\newpage
+\section{Interfaces de l'application}
+
+\interfacescreenshot{Interface principale de l'application}{assets/01-home.png}{La page d'accueil presente BookWise comme une bibliotheque numerique permettant de parcourir le catalogue, commander par virement bancaire et debloquer les livres apres validation.}
+
+\interfacescreenshot{Catalogue des livres}{assets/02-catalog.png}{La page catalogue affiche les livres publies avec leur couverture, auteur, description courte et prix.}
+
+\interfacescreenshot{Details d'un livre}{assets/03-book-detail.png}{La page detail presente les informations completes du livre : titre, sous-titre, auteurs, categories, annee de publication, langue, prix et description.}
+
+\subsection*{a) Espace client}
+\addcontentsline{toc}{section}{a) Espace client}
+
+L'espace client regroupe les pages accessibles au lecteur authentifie. Apres inscription et connexion, le lecteur peut choisir des livres, lancer un checkout et suivre l'etat de ses commandes.
+
+\interfacescreenshot{Interface de connexion}{assets/04-login.png}{Le formulaire de connexion verifie les identifiants, genere un jeton JWT et redirige l'utilisateur vers la page demandee.}
+
+\interfacescreenshot{Interface d'inscription}{assets/05-register.png}{Le formulaire d'inscription cree un compte lecteur avec nom complet, email et mot de passe confirme.}
+
+\interfacescreenshot{Resume du checkout}{assets/06-checkout-summary.png}{La page checkout recapitule les livres selectionnes, le total et la devise avant creation de la commande.}
+
+\interfacescreenshot{Paiement par virement bancaire}{assets/07-payment-proof.png}{La page paiement affiche les informations bancaires configurees, permet d'indiquer une reference de transfert et d'envoyer une preuve au format PDF ou image.}
+
+\interfacescreenshot{Historique des commandes}{assets/08-my-orders.png}{La page des commandes permet au lecteur de suivre les statuts : paiement en attente, preuve soumise, paiement approuve ou rejete.}
+
+\interfacescreenshot{Bibliotheque personnelle}{assets/09-my-library.png}{La bibliotheque affiche les livres dont le paiement est approuve et propose la lecture en ligne ou le telechargement.}
+
+Le controle de possession est realise cote service. Avant de servir un fichier, l'application verifie qu'il existe une commande payee associee a l'utilisateur et au livre demande. Cette verification evite l'acces direct a un fichier par simple modification d'URL.
+
+\subsection*{b) Espace administrateur}
+\addcontentsline{toc}{section}{b) Espace administrateur}
+
+L'espace administrateur est protege par Spring Security et limite au role \texttt{ADMIN}. Il permet de superviser le contenu et les paiements.
+
+\interfacescreenshot{Tableau de bord administrateur}{assets/10-admin-dashboard.png}{Le tableau de bord donne acces aux modules de gestion des livres, auteurs, categories et paiements.}
+
+\interfacescreenshot{Gestion des livres}{assets/11-admin-books.png}{L'administrateur peut creer, modifier, publier, depublier ou supprimer un livre lorsque celui-ci n'est pas lie a une commande existante.}
+
+\interfacescreenshot{Formulaire de livre}{assets/12-admin-book-form.png}{Le formulaire permet de renseigner les informations du livre, sa couverture, ses auteurs, ses categories, son prix, sa devise et ses fichiers PDF ou EPUB.}
+
+\interfacescreenshot{Gestion des auteurs}{assets/13-admin-authors.png}{La page des auteurs permet de consulter, creer, modifier ou supprimer les auteurs associes aux livres du catalogue.}
+
+\interfacescreenshot{Gestion des categories}{assets/14-admin-categories.png}{La page des categories permet de structurer le catalogue et de faciliter la classification des livres.}
+
+\interfacescreenshot{Validation des paiements}{assets/15-admin-payments.png}{L'administrateur consulte les preuves de paiement, puis approuve ou rejette la demande avec une note optionnelle.}
+
+Lorsqu'un paiement est approuve, le statut du paiement passe a \texttt{APPROVED} et la commande associee passe a \texttt{PAID}. En cas de rejet, la commande passe a \texttt{REJECTED}, permettant au lecteur de soumettre une nouvelle preuve si necessaire.
+
+\subsection*{c) Chatbot et assistance}
+\addcontentsline{toc}{section}{c) Chatbot et assistance}
+
+BookWise integre un assistant conversationnel accessible aux utilisateurs authentifies. Le chatbot s'adapte au role :
+
+\begin{itemize}
+    \item pour un lecteur, il repond uniquement aux questions relatives au catalogue publie, aux auteurs et aux categories ;
+    \item pour un administrateur, il peut repondre aux questions sur les donnees non secretes et proposer des actions de creation, modification ou suppression pour les livres, auteurs et categories ;
+    \item toute action proposee par le chatbot doit etre confirmee avant execution, ce qui evite les modifications automatiques non controlees.
+\end{itemize}
+
+\interfacescreenshot{Interface du chatbot BookWise AI}{assets/16-chatbot.png}{Le panneau de discussion affiche les messages, conserve l'identifiant d'interaction precedent et propose une confirmation lorsqu'une action administrative est detectee.}
+
+\section{Architecture technique realisee}
+
+L'application suit une architecture en couches. Les controleurs recoivent les requetes HTTP et preparent les modeles pour les templates Thymeleaf. Les services contiennent la logique metier : creation de commande, validation des selections, soumission des preuves, approbation des paiements et controle d'acces aux fichiers. Les repositories gerent l'acces aux donnees via Spring Data JPA. Les entites representent le modele relationnel de la base PostgreSQL.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        layer/.style={draw=bookwiseGreen, rounded corners=4pt, fill=bookwiseLight, minimum width=10cm, minimum height=0.9cm, align=center},
+        arrow/.style={-{Stealth[length=2mm]}, thick}
+    ]
+        \node[layer] (view) {Templates Thymeleaf + Tailwind CSS};
+        \node[layer, below=0.55cm of view] (controller) {Controleurs Spring MVC};
+        \node[layer, below=0.55cm of controller] (service) {Services metier};
+        \node[layer, below=0.55cm of service] (repo) {Repositories Spring Data JPA};
+        \node[layer, below=0.55cm of repo] (db) {PostgreSQL + stockage local des fichiers};
+        \draw[arrow] (view) -- (controller);
+        \draw[arrow] (controller) -- (service);
+        \draw[arrow] (service) -- (repo);
+        \draw[arrow] (repo) -- (db);
+    \end{tikzpicture}
+    \caption{Architecture technique de BookWise}
+\end{figure}
+
+\section{Securite et controle d'acces}
+
+La securite repose sur Spring Security. Les routes publiques comprennent l'accueil, le catalogue, les details des livres, les couvertures et les pages d'authentification. Les routes de checkout, commandes et bibliotheque necessitent une authentification. Les routes d'administration exigent le role \texttt{ADMIN}.
+
+L'authentification utilise un jeton JWT genere apres connexion et stocke dans un cookie. La protection CSRF est activee pour les formulaires sensibles. Les mots de passe sont stockes sous forme hachee et ne sont jamais exposes dans les interfaces ou dans le contexte transmis au chatbot.
+
+\section{Gestion des fichiers}
+
+BookWise gere trois types de fichiers : les couvertures de livres, les fichiers numeriques PDF ou EPUB, et les preuves de paiement. Le service de stockage local organise ces fichiers dans des repertoires separes et verifie les types autorises. Les preuves de paiement acceptent les formats PDF, PNG, JPG et JPEG, avec une limite de taille configuree.
+
+\chapterconclusion{
+La realisation de BookWise a abouti a une application web complete permettant de gerer un catalogue numerique, des commandes, des preuves de paiement, une bibliotheque personnelle et un espace administrateur. L'integration du chatbot apporte une assistance supplementaire tout en conservant un controle strict sur les actions sensibles.
+}
+
+\chapter*{Conclusion Generale}
+\addcontentsline{toc}{chapter}{Conclusion Generale}
+
+Le projet BookWise a permis de concevoir et de developper une application web de bibliotheque numerique adaptee a un processus de paiement par virement bancaire. La solution proposee centralise le catalogue, les utilisateurs, les commandes, les paiements et les fichiers numeriques dans une architecture coherente et securisee.
+
+Sur le plan technique, l'utilisation de Spring Boot, Spring MVC, Thymeleaf, Spring Security, Spring Data JPA et PostgreSQL a permis de construire une application robuste, modulaire et maintenable. L'organisation par couches facilite la separation des responsabilites entre l'affichage, le traitement metier et la persistance des donnees. La securite joue un role important dans le projet, notamment pour l'authentification, la protection des routes d'administration et le controle d'acces aux fichiers achetes.
+
+Sur le plan fonctionnel, BookWise repond aux besoins essentiels d'une plateforme de livres numeriques : consultation du catalogue, commande, depot de preuve de paiement, validation administrative et acces aux ouvrages. Le chatbot enrichit l'experience utilisateur en apportant une aide contextuelle, avec des restrictions adaptees au role de chaque utilisateur.
+
+Ce projet nous a permis de consolider nos competences en developpement web fullstack cote serveur, en conception logicielle, en gestion de base de donnees, en securite applicative et en documentation technique. Il ouvre egalement plusieurs perspectives d'evolution : recherche avancee dans le catalogue, statistiques d'activite, amelioration du suivi administratif, enrichissement du chatbot et deploiement cloud complet.
+
+\begin{thebibliography}{9}
+    \addcontentsline{toc}{chapter}{References}
+    \bibitem{springboot}
+    Spring Boot Documentation, \url{https://spring.io/projects/spring-boot}, consulte pour les principes de configuration et de developpement d'applications Spring Boot.
+
+    \bibitem{springsecurity}
+    Spring Security Reference, \url{https://spring.io/projects/spring-security}, consulte pour l'authentification, les autorisations et la protection CSRF.
+
+    \bibitem{thymeleaf}
+    Thymeleaf Documentation, \url{https://www.thymeleaf.org/documentation.html}, consulte pour la generation de vues HTML cote serveur.
+
+    \bibitem{postgresql}
+    PostgreSQL Documentation, \url{https://www.postgresql.org/docs/}, consulte pour les concepts de base de donnees relationnelle utilises dans le projet.
+
+    \bibitem{jwt}
+    JSON Web Token Introduction, \url{https://jwt.io/introduction}, consulte pour le principe des jetons JWT.
+
+    \bibitem{gemini}
+    Google Gemini API Documentation, \url{https://ai.google.dev/}, consulte pour les principes d'integration d'un modele conversationnel.
+
+    \bibitem{tailwind}
+    Tailwind CSS Documentation, \url{https://tailwindcss.com/docs}, consulte pour la construction d'interfaces modernes et responsives.
+\end{thebibliography}
+
+\end{document}
