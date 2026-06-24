@@ -83,6 +83,7 @@ public class ChatbotService {
         this.objectMapper = objectMapper;
     }
 
+    @Transactional
     public ChatResponse handleMessage(String message, String previousInteractionId, AppUserPrincipal principal, HttpSession session) {
         String dbContext = principal.role() == UserRole.ADMIN ? buildAdminContext() : buildReaderContext();
         String systemInstruction = buildSystemInstructions(principal, dbContext);

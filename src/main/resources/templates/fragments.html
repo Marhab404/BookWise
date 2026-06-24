@@ -190,6 +190,22 @@
             const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
             let previousInteractionId = null;
 
+            function getCurrentCsrfToken() {
+                const name = "XSRF-TOKEN=";
+                const decodedCookie = decodeURIComponent(document.cookie);
+                const ca = decodedCookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return csrfToken;
+            }
+
             // Toggle Panel Open/Close
             launcher.addEventListener('click', () => {
                 if (panel.classList.contains('hidden')) {
@@ -297,11 +313,13 @@
                 const submitBtn = document.getElementById('chatbot-submit');
                 submitBtn.disabled = true;
 
+                const currentCsrf = getCurrentCsrfToken();
                 fetch('/chatbot/messages', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        [csrfHeader]: csrfToken
+                        'X-XSRF-TOKEN': currentCsrf,
+                        [csrfHeader]: currentCsrf
                     },
                     body: JSON.stringify({
                         message: text,
@@ -310,7 +328,11 @@
                 })
                 .then(res => {
                     if (!res.ok) {
-                        throw new Error('Server responded with an error');
+                        return res.json().then(errData => {
+                            throw new Error(errData.message || 'Server error occurred');
+                        }).catch(() => {
+                            throw new Error('Server responded with an error');
+                        });
                     }
                     return res.json();
                 })
@@ -333,7 +355,7 @@
                 })
                 .catch(err => {
                     removeTypingIndicator();
-                    appendMessage('Sorry, an error occurred. Please try again.', false);
+                    appendMessage(err.message || 'Sorry, an error occurred. Please try again.', false);
                     input.disabled = false;
                     submitBtn.disabled = false;
                     input.focus();
@@ -393,17 +415,23 @@
                     cancelBtn.disabled = true;
                     confirmBtn.innerText = 'Confirming...';
 
+                    const currentCsrf = getCurrentCsrfToken();
                     fetch('/chatbot/actions/confirm', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            [csrfHeader]: csrfToken
+                            'X-XSRF-TOKEN': currentCsrf,
+                            [csrfHeader]: currentCsrf
                         },
                         body: JSON.stringify({ actionId: preview.actionId })
                     })
-                    .then(res => res.json())
+                    .then(res => {
+                        return res.json().catch(() => {
+                            throw new Error('Server responded with an error');
+                        });
+                    })
                     .then(resData => {
-                        if (resData.status === 'success') {
+                        if (resData.status === 'success' || (!resData.status && resData.message && resData.message.indexOf("success") !== -1)) {
                             confirmBtn.innerText = 'Success!';
                             confirmBtn.className = 'w-full bg-emerald-700 text-white font-semibold py-2 rounded-xl text-xs';
                             
@@ -428,7 +456,7 @@
                         }
                     })
                     .catch(err => {
-                        errorAlert.innerText = 'Network error occurred. Please try again.';
+                        errorAlert.innerText = err.message || 'Network error occurred. Please try again.';
                         errorAlert.classList.remove('hidden');
                         confirmBtn.disabled = false;
                         cancelBtn.disabled = false;

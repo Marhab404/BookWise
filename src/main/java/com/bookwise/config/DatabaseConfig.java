@@ -8,6 +8,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -17,10 +18,23 @@ import org.springframework.context.annotation.Profile;
 public class DatabaseConfig {
 
     @Bean
-    public DataSource dataSource() {
-        String databaseUrl = System.getenv("DATABASE_URL");
+    public DataSource dataSource(@Value("${DATABASE_URL:}") String rawDatabaseUrl) {
+        String databaseUrl = rawDatabaseUrl;
+        if (databaseUrl != null) {
+            databaseUrl = databaseUrl.trim();
+            if (databaseUrl.startsWith("'") && databaseUrl.endsWith("'")) {
+                databaseUrl = databaseUrl.substring(1, databaseUrl.length() - 1);
+            } else if (databaseUrl.startsWith("\"") && databaseUrl.endsWith("\"")) {
+                databaseUrl = databaseUrl.substring(1, databaseUrl.length() - 1);
+            }
+        }
+
         if (databaseUrl == null || databaseUrl.isBlank()) {
-            throw new IllegalStateException("DATABASE_URL environment variable is required");
+            databaseUrl = System.getenv("DATABASE_URL");
+        }
+
+        if (databaseUrl == null || databaseUrl.isBlank()) {
+            throw new IllegalStateException("DATABASE_URL environment variable or Spring property is required");
         }
 
         ParsedDatabaseUrl parsed = ParsedDatabaseUrl.from(databaseUrl);
