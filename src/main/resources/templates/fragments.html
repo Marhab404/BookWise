@@ -478,7 +478,7 @@
     </script>
 </div>
 
-<aside th:fragment="adminNav(activePage)" class="w-full rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:w-72">
+<aside th:fragment="adminNav(activePage)" class="w-full rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:sticky lg:self-start lg:top-24 lg:w-72">
     <div class="mb-4">
         <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Admin</p>
         <h2 class="mt-1 text-lg font-semibold text-slate-900">Management</h2>
@@ -492,6 +492,8 @@
            class="block rounded-xl px-3 py-2 transition">Authors</a>
         <a href="/admin/categories" th:classappend="${activePage == 'categories'} ? ' bg-bookwise-50 text-bookwise-800' : ' text-slate-600 hover:bg-slate-50'"
            class="block rounded-xl px-3 py-2 transition">Categories</a>
+        <a href="/admin/users" th:classappend="${activePage == 'users'} ? ' bg-bookwise-50 text-bookwise-800' : ' text-slate-600 hover:bg-slate-50'"
+           class="block rounded-xl px-3 py-2 transition">Users</a>
         <a href="/admin/payments" th:classappend="${activePage == 'payments'} ? ' bg-bookwise-50 text-bookwise-800' : ' text-slate-600 hover:bg-slate-50'"
            class="block rounded-xl px-3 py-2 transition">Payments</a>
     </nav>

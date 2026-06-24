@@ -13,6 +13,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @EntityGraph(attributePaths = {"authors", "categories"})
     List<Book> findByPublishedTrueOrderByCreatedAtDesc();
 
+    long countByPublishedTrue();
+
     @EntityGraph(attributePaths = {"authors", "categories"})
     List<Book> findAllByOrderByCreatedAtDesc();
 

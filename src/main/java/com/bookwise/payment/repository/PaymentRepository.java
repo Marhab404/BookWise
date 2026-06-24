@@ -15,4 +15,8 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     @EntityGraph(attributePaths = {"order", "order.items", "order.items.book", "order.user", "reviewedByAdmin"})
     Optional<Payment> findWithOrderAndUserById(Long id);
+
+    long countByStatus(PaymentStatus status);
+
+    boolean existsByReviewedByAdminId(Long adminId);
 }

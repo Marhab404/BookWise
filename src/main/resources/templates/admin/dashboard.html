@@ -9,14 +9,39 @@
     <div class="flex flex-col gap-8 lg:flex-row">
         <div th:replace="~{fragments :: adminNav('dashboard')}"></div>
         <section class="flex-1 space-y-6">
-            <div class="grid gap-4 sm:grid-cols-2">
+
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div th:each="kpi : ${kpiCards}" class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <p class="text-sm text-slate-500" th:text="${kpi.label}"></p>
+                    <p class="mt-2 text-3xl font-bold" th:text="${kpi.value}"></p>
+                    <p class="mt-1 text-xs text-slate-400" th:text="${kpi.hint}"></p>
+                </div>
+            </div>
+
+            <div class="grid gap-6 lg:grid-cols-2">
                 <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                    <p class="text-sm text-slate-500">Books</p>
-                    <p class="mt-2 text-3xl font-bold" th:text="${bookCount}"></p>
+                    <h2 class="mb-4 text-lg font-semibold">Users by role</h2>
+                    <canvas id="usersByRoleChart" height="200"></canvas>
                 </div>
                 <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                    <p class="text-sm text-slate-500">Payments awaiting review</p>
-                    <p class="mt-2 text-3xl font-bold" th:text="${pendingPaymentsCount}"></p>
+                    <h2 class="mb-4 text-lg font-semibold">Orders by status</h2>
+                    <canvas id="ordersByStatusChart" height="200"></canvas>
+                </div>
+                <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <h2 class="mb-4 text-lg font-semibold">Payments by status</h2>
+                    <canvas id="paymentsByStatusChart" height="200"></canvas>
+                </div>
+                <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <h2 class="mb-4 text-lg font-semibold">Top-selling books</h2>
+                    <canvas id="topBooksChart" height="200"></canvas>
+                </div>
+                <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
+                    <h2 class="mb-4 text-lg font-semibold">Revenue (last 6 months)</h2>
+                    <canvas id="revenueChart" height="120"></canvas>
+                </div>
+                <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
+                    <h2 class="mb-4 text-lg font-semibold">Paid orders (last 6 months)</h2>
+                    <canvas id="ordersChart" height="120"></canvas>
                 </div>
             </div>
         </section>
@@ -24,5 +49,99 @@
 </main>
 
 <div th:replace="~{fragments :: footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script th:inline="javascript">
+(function() {
+    const teal = '#14b8a6';
+    const tealLight = '#5eead4';
+    const slate = '#64748b';
+    const rose = '#f43f5e';
+    const amber = '#f59e0b';
+    const blue = '#0ea5e9';
+    const purple = '#8b5cf6';
+    const emerald = '#10b981';
+
+    function pieChart(id, slices) {
+        const ctx = document.getElementById(id);
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: slices.map(s => s.label),
+                datasets: [{
+                    data: slices.map(s => s.value),
+                    backgroundColor: slices.map(s => s.color),
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12 } }
+                }
+            }
+        });
+    }
+
+    function barChart(id, series) {
+        const ctx = document.getElementById(id);
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: series.labels,
+                datasets: [{
+                    label: series.label,
+                    data: series.values,
+                    backgroundColor: teal,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { callback: function(v) { return v.toLocaleString(); } } }
+                }
+            }
+        });
+    }
+
+    function horizontalBarChart(id, items, labelKey, valueKey) {
+        const ctx = document.getElementById(id);
+        if (!ctx) return;
+        const labels = items.map(i => i[labelKey]).reverse();
+        const values = items.map(i => i[valueKey]).reverse();
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: teal,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { beginAtZero: true, ticks: { callback: function(v) { return Number.isInteger(v) ? v : ''; } } }
+                }
+            }
+        });
+    }
+
+    /*[[${usersByRole}]]*/
+    pieChart('usersByRoleChart', /*[[${usersByRole}]]*/ []);
+    pieChart('ordersByStatusChart', /*[[${ordersByStatus}]]*/ []);
+    pieChart('paymentsByStatusChart', /*[[${paymentsByStatus}]]*/ []);
+    barChart('revenueChart', /*[[${monthlyRevenue}]]*/ {label: '', labels: [], values: []});
+    barChart('ordersChart', /*[[${monthlyOrders}]]*/ {label: '', labels: [], values: []});
+    horizontalBarChart('topBooksChart', /*[[${topBooks}]]*/ [], 'title', 'sold');
+})();
+</script>
 </body>
 </html>
