@@ -583,7 +583,9 @@ La conception représente une étape essentielle pour transformer les besoins en
     \hline
     UML & Représentation des acteurs, cas d'utilisation, séquences et classes du système.\\
     \hline
-    TikZ & Generation des diagrammes directement dans le document LaTeX afin de conserver un rapport autonome compatible avec Overleaf.\\
+    TikZ & Génération des diagrammes de séquence et du modèle de classes directement dans le document LaTeX afin de conserver un rapport autonome compatible avec Overleaf.\\
+    \hline
+    Images PNG & Intégration des diagrammes de cas d'utilisation fournis comme illustrations exportées et lisibles dans Overleaf.\\
     \hline
 \end{longtable}
 
@@ -591,85 +593,25 @@ La conception représente une étape essentielle pour transformer les besoins en
 
 \subsection{Diagramme de cas d'utilisation général}
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
     \centering
-    \begin{tikzpicture}[
-        actor/.style={draw, circle, minimum size=0.9cm},
-        usecase/.style={draw=bookwiseGreen, ellipse, fill=bookwiseLight, align=center, minimum width=3.2cm, minimum height=0.9cm, font=\small},
-        line/.style={thick}
-    ]
-        \node[actor] (reader) at (-5,0) {};
-        \node[below=0.1cm of reader] {Lecteur};
-        \node[actor] (admin) at (5,0) {};
-        \node[below=0.1cm of admin] {Administrateur};
-
-        \node[draw, rounded corners=4pt, minimum width=8.5cm, minimum height=7cm, label=above:{Système BookWise}] (system) at (0,0) {};
-        \node[usecase] (uc1) at (-1.8,2.4) {S'authentifier};
-        \node[usecase] (uc2) at (-1.8,1.2) {Consulter\\catalogue};
-        \node[usecase] (uc3) at (-1.8,0) {Commander\\des livres};
-        \node[usecase] (uc4) at (-1.8,-1.2) {Soumettre preuve\\de paiement};
-        \node[usecase] (uc5) at (-1.8,-2.4) {Accéder a\\ma bibliothèque};
-        \node[usecase] (uc6) at (1.9,2.4) {Gérer catalogue};
-        \node[usecase] (uc7) at (1.9,1.2) {Gérer\\utilisateurs};
-        \node[usecase] (uc8) at (1.9,0) {Valider\\paiements};
-        \node[usecase] (uc9) at (1.9,-1.2) {Consulter\\tableau de bord};
-        \node[usecase] (uc10) at (1.9,-2.4) {Utiliser\\chatbot};
-
-        \draw[line] (reader) -- (uc1);
-        \draw[line] (reader) -- (uc2);
-        \draw[line] (reader) -- (uc3);
-        \draw[line] (reader) -- (uc4);
-        \draw[line] (reader) -- (uc5);
-        \draw[line] (reader) -- (uc10);
-        \draw[line] (admin) -- (uc1);
-        \draw[line] (admin) -- (uc6);
-        \draw[line] (admin) -- (uc7);
-        \draw[line] (admin) -- (uc8);
-        \draw[line] (admin) -- (uc9);
-        \draw[line] (admin) -- (uc10);
-    \end{tikzpicture}
+    \includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{assets/usecase-general.png}
     \caption{Diagramme de cas d'utilisation général}
 \end{figure}
 
 \subsection{Diagramme de cas d'utilisation de l'administrateur}
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
     \centering
-    \begin{tikzpicture}[
-        usecase/.style={draw=bookwiseGreen, ellipse, fill=bookwiseLight, align=center, minimum width=3.5cm, minimum height=0.85cm, font=\small}
-    ]
-        \node[draw, circle, minimum size=0.9cm] (admin) at (-4,0) {};
-        \node[below=0.1cm of admin] {Administrateur};
-        \node[usecase] (u1) at (1,3.0) {Créer/modifier\\un livre};
-        \node[usecase] (u2) at (1,1.95) {Publiér ou\\dépublier};
-        \node[usecase] (u3) at (1,0.9) {Gérer auteurs\\et catégories};
-        \node[usecase] (u4) at (1,-0.15) {Gérer\\utilisateurs};
-        \node[usecase] (u5) at (1,-1.2) {Consulter KPI\\et graphiques};
-        \node[usecase] (u6) at (1,-2.25) {Examiner preuve\\de paiement};
-        \node[usecase] (u7) at (1,-3.3) {Approuver ou\\rejeter paiement};
-        \node[usecase] (u8) at (1,-4.35) {Confirmer action\\du chatbot};
-        \foreach \uc in {u1,u2,u3,u4,u5,u6,u7,u8} \draw[thick] (admin) -- (\uc);
-    \end{tikzpicture}
+    \includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{assets/usecase-admin.png}
     \caption{Diagramme de cas d'utilisation de l'administrateur}
 \end{figure}
 
 \subsection{Diagramme de cas d'utilisation du client}
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
     \centering
-    \begin{tikzpicture}[
-        usecase/.style={draw=bookwiseGreen, ellipse, fill=bookwiseLight, align=center, minimum width=3.5cm, minimum height=0.85cm, font=\small}
-    ]
-        \node[draw, circle, minimum size=0.9cm] (reader) at (-4,0) {};
-        \node[below=0.1cm of reader] {Lecteur};
-        \node[usecase] (u1) at (1,2.4) {Créer un compte};
-        \node[usecase] (u2) at (1,1.2) {Consulter livres\\publiés};
-        \node[usecase] (u3) at (1,0) {Créer commande};
-        \node[usecase] (u4) at (1,-1.2) {Soumettre preuve\\de virement};
-        \node[usecase] (u5) at (1,-2.4) {Suivre mes\\commandes};
-        \node[usecase] (u6) at (1,-3.6) {Lire ou télécharger\\un livre};
-        \foreach \uc in {u1,u2,u3,u4,u5,u6} \draw[thick] (reader) -- (\uc);
-    \end{tikzpicture}
+    \includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{assets/usecase-client.png}
     \caption{Diagramme de cas d'utilisation du client}
 \end{figure}
 
